@@ -1,3 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom Styles */
+.nav-link {
+  @apply flex items-center space-x-2 p-2 rounded-lg transition-colors;
+}
+
+.nav-link.active {
+  @apply text-blue-600 bg-blue-50;
+}
+
+.nav-link:not(.active) {
+  @apply text-gray-600 hover:bg-gray-50;
+}
+
+.symptom-button {
+  @apply w-full text-left p-4 rounded-lg border transition-colors;
+}
+
+.symptom-button.active {
+  @apply border-blue-500 bg-blue-50;
+}
+
+.symptom-button:not(.active) {
+  @apply border-gray-200 hover:border-blue-300;
+}
+
+.chat-bubble {
+  @apply inline-block p-2 rounded-lg;
+}
+
+.chat-bubble.user {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.chat-bubble.bot {
+  @apply bg-gray-100 text-gray-800;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .nav-link {
+    @apply justify-center;
+  }
+
+  .nav-link span {
+    @apply hidden;
+  }
+
+  .symptom-button {
+    @apply p-3;
+  }
+}
