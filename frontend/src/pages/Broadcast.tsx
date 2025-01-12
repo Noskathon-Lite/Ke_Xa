@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Radio, Bell, AlertTriangle, Info } from 'lucide-react';
 
 interface Broadcast {
@@ -9,65 +9,6 @@ interface Broadcast {
   timestamp: string;
   area: string;
 }
-
-const mockBroadcasts: Broadcast[] = [
-  {
-    id: '1',
-    type: 'emergency',
-    title: 'Flash Flood Warning',
-    message: 'Immediate evacuation required in downtown area. Move to higher ground.',
-    timestamp: new Date().toISOString(),
-    area: 'Downtown District'
-  },
-  {
-    id: '2',
-    type: 'update',
-    title: 'COVID-19 Testing Sites',
-    message: 'New testing locations available at Central Hospital and Community Center.',
-    timestamp: new Date().toISOString(),
-    area: 'Citywide'
-  },
-  {
-    id: '4',
-    type: 'update',
-    title: 'HMPC Testing ',
-    message: 'New testing locations available at Central Hospital and Community Center.',
-    timestamp: new Date().toISOString(),
-    area: 'Citywide'
-  },
-  {
-    id: '6',
-    type: 'update',
-    title: 'Cholera Testing ',
-    message: 'New testing locations available at Central Hospital and Community Center.',
-    timestamp: new Date().toISOString(),
-    area: 'Citywide'
-  },
-  {
-    id: '7',
-    type: 'update',
-    title: 'Malaria Testing ',
-    message: 'New testing locations available at Central Hospital and Community Center.',
-    timestamp: new Date().toISOString(),
-    area: 'Citywide'
-  },
-  {
-    id: '5',
-    type: 'update',
-    title: 'Diarrhea Testing',
-    message: 'New testing locations available at Central Hospital and Community Center.',
-    timestamp: new Date().toISOString(),
-    area: 'Citywide'
-  },
-  {
-    id: '3',
-    type: 'advisory',
-    title: 'Heat Wave Alert',
-    message: 'Extreme temperatures expected. Stay hydrated and avoid outdoor activities.',
-    timestamp: new Date().toISOString(),
-    area: 'All Districts'
-  }
-];
 
 const getBroadcastStyle = (type: Broadcast['type']) => {
   switch (type) {
@@ -83,7 +24,35 @@ const getBroadcastStyle = (type: Broadcast['type']) => {
 };
 
 const Broadcast = () => {
+  const [broadcasts, setBroadcasts] = useState<Broadcast[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [subscribed, setSubscribed] = useState(false);
+
+  // Fetch broadcasts from API
+  const fetchBroadcasts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Replace with your API endpoint
+      const response = await fetch('https://mockapi.io/projects/123456789/broadcasts');
+      if (!response.ok) {
+        throw new Error('Failed to fetch broadcasts');
+      }
+
+      const data = await response.json();
+      setBroadcasts(data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBroadcasts();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -96,9 +65,7 @@ const Broadcast = () => {
           <button
             onClick={() => setSubscribed(!subscribed)}
             className={`px-4 py-2 rounded-lg transition-colors ${
-              subscribed
-                ? 'bg-green-600 text-white'
-                : 'bg-blue-600 text-white'
+              subscribed ? 'bg-green-600 text-white' : 'bg-blue-600 text-white'
             }`}
           >
             <Bell className="w-4 h-4 inline-block mr-2" />
@@ -106,30 +73,43 @@ const Broadcast = () => {
           </button>
         </div>
 
+        {/* Display Loading State */}
+        {loading && <p className="text-gray-700">Loading broadcasts...</p>}
+
+        {/* Display Error State */}
+        {error && (
+          <p className="text-red-600">
+            Error: {error}. Please try refreshing the page.
+          </p>
+        )}
+
+        {/* Display Broadcasts */}
         <div className="space-y-4">
-          {mockBroadcasts.map((broadcast) => (
-            <div
-              key={broadcast.id}
-              className={`border rounded-lg p-4 ${getBroadcastStyle(broadcast.type)}`}
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="flex items-center">
-                    <AlertTriangle className="w-5 h-5 mr-2" />
-                    <h3 className="font-semibold">{broadcast.title}</h3>
+          {!loading &&
+            !error &&
+            broadcasts.map((broadcast) => (
+              <div
+                key={broadcast.id}
+                className={`border rounded-lg p-4 ${getBroadcastStyle(broadcast.type)}`}
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="flex items-center">
+                      <AlertTriangle className="w-5 h-5 mr-2" />
+                      <h3 className="font-semibold">{broadcast.title}</h3>
+                    </div>
+                    <p className="mt-2 text-sm">{broadcast.message}</p>
+                    <div className="mt-3 text-sm">
+                      <span className="font-medium">Area: </span>
+                      {broadcast.area}
+                    </div>
                   </div>
-                  <p className="mt-2 text-sm">{broadcast.message}</p>
-                  <div className="mt-3 text-sm">
-                    <span className="font-medium">Area: </span>
-                    {broadcast.area}
-                  </div>
+                  <span className="text-xs">
+                    {new Date(broadcast.timestamp).toLocaleTimeString()}
+                  </span>
                 </div>
-                <span className="text-xs">
-                  {new Date(broadcast.timestamp).toLocaleTimeString()}
-                </span>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
 
@@ -139,8 +119,8 @@ const Broadcast = () => {
           <div>
             <h3 className="font-semibold text-blue-900">Stay Informed</h3>
             <p className="text-sm text-blue-800 mt-1">
-              Subscribe to receive real-time alerts about emergencies in your area.
-              We'll only send you important notifications.
+              Subscribe to receive real-time alerts about emergencies in your area. We'll only send
+              you important notifications.
             </p>
           </div>
         </div>
@@ -150,8 +130,8 @@ const Broadcast = () => {
           <div>
             <h3 className="font-semibold text-green-900">Notification Settings</h3>
             <p className="text-sm text-green-800 mt-1">
-              Customize your alert preferences and choose which types of
-              notifications you want to receive.
+              Customize your alert preferences and choose which types of notifications you want to
+              receive.
             </p>
           </div>
         </div>
