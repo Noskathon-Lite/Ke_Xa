@@ -95,14 +95,14 @@ const Layout = () => {
           <h1 className="text-2xl font-bold text-gray-900">
             Health Emergency & Safety
           </h1>
-          <div className="text-red-600">{dateTime}</div>
+          <div className="text-red-500">{dateTime}</div>
           <img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Flag_of_Nepal.png" alt="Nepali Flag" className="h-6 w-6"/>
         </div>
         
       </header>
       
       <div className="max-w-7xl mx-auto px-4 py-6 md:py-8">
-        <div className="flex flex-col md:flex-row md:space-x-8">
+        <div className="flex flex-col md:flex-row md:space-x-1">
           <Navigation />
           <main className="flex-1 pb-20 md:pb-0">
             <Outlet />
