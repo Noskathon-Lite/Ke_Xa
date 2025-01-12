@@ -3,12 +3,12 @@ import { MapContainer, TileLayer, Circle, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { HealthRisk } from '../types';
 
-const mockRisks: HealthRisk[] = [
+const healthRiskData: HealthRisk[] = [
   {
     id: '1',
     type: 'air',
     level: 'high',
-    location: { lat: 34.0522, lng: -118.2437 },
+    location: { lat: 27.7008, lng: 85.3000 },
     description: 'High air pollution levels detected',
     recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
   },
@@ -16,9 +16,49 @@ const mockRisks: HealthRisk[] = [
     id: '2',
     type: 'disease',
     level: 'medium',
-    location: { lat: 34.0622, lng: -118.2537 },
+    location: { lat: 27.7108, lng: 85.3100 },
     description: 'Increased flu cases reported',
     recommendations: ['Practice social distancing', 'Get vaccinated'],
+  },
+  {
+    id: '3',
+    type: 'water',
+    level: 'low',
+    location: { lat: 27.7150, lng: 85.3240 },
+    description: 'Water quality is safe for use',
+    recommendations: ['No precautions necessary'],
+  },
+  {
+    id: '4',
+    type: 'air',
+    level: 'medium',
+    location: { lat: 27.6712, lng: 85.2890 },
+    description: 'Moderate air pollution levels detected',
+    recommendations: ['Reduce outdoor exposure', 'Wear a mask if sensitive to pollutants'],
+  },
+  {
+    id: '5',
+    type: 'disease',
+    level: 'high',
+    location: { lat: 27.6882, lng: 85.3280 },
+    description: 'High number of dengue cases reported',
+    recommendations: ['Use mosquito repellent', 'Avoid stagnant water'],
+  },
+  {
+    id: '6',
+    type: 'water',
+    level: 'medium',
+    location: { lat: 27.7030, lng: 85.2880 },
+    description: 'Contamination detected in local water supply',
+    recommendations: ['Boil water before drinking', 'Use water purifiers'],
+  },
+  {
+    id: '7',
+    type: 'air',
+    level: 'high',
+    location: { lat: 27.6872, lng: 85.3245 },
+    description: 'High air pollution levels detected due to traffic',
+    recommendations: ['Avoid outdoor activities', 'Wear masks in the area'],
   },
 ];
 
@@ -42,7 +82,7 @@ const RiskMap = () => {
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Health Risk Heat Map</h2>
         <div className="h-[600px] rounded-lg overflow-hidden">
           <MapContainer
-            center={[34.0522, -118.2437]}
+            center={[27.7008, 85.3000]}
             zoom={13}
             className="h-full w-full"
           >
@@ -50,7 +90,7 @@ const RiskMap = () => {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
-            {mockRisks.map((risk) => (
+            {healthRiskData.map((risk) => (
               <Circle
                 key={risk.id}
                 center={[risk.location.lat, risk.location.lng]}
@@ -74,32 +114,6 @@ const RiskMap = () => {
               </Circle>
             ))}
           </MapContainer>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <h3 className="font-semibold text-gray-900 mb-2">Air Quality</h3>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <span>Poor - Take precautions</span>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <h3 className="font-semibold text-gray-900 mb-2">Disease Outbreaks</h3>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <span>Moderate risk - Stay alert</span>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <h3 className="font-semibold text-gray-900 mb-2">Water Quality</h3>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            <span>Good - Safe to use</span>
-          </div>
         </div>
       </div>
     </div>
