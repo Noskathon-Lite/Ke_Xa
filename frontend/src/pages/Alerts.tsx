@@ -72,7 +72,7 @@ const Alerts = () => {
   // Handle search input change for suggestions
   const handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setLocation(event.target.value);
-    console.log("Search value: ", event.target.value); // Debug log
+    
 
     // Check if the search term is not empty and is more than one character
     if (event.target.value.trim() === '' || event.target.value.length < 2) {
@@ -86,7 +86,7 @@ const Alerts = () => {
       const response = await axios.get(
         `https://api.opencagedata.com/geocode/v1/json?q=${event.target.value}&key=${apiKey}`
       );
-      console.log("API Response: ", response.data); // Debug log
+      
 
       const data = response.data;
       if (data.results && data.results.length > 0) {
@@ -165,17 +165,17 @@ const Alerts = () => {
           </ul>
         )}
         {suggestions.length === 0 && !loadingSuggestions && location && (
-          <p>No suggestions found.</p> // Fallback message when no suggestions are found
+          <p>No Suggestions found.</p> // Fallback message when no suggestions are found
         )}
       </div>
 
-      {loading && <p>Loading risk data...</p>}
+      {loading && <p>Loading Earthquake Alerts Data...</p>}
 
       {riskData && (
         <MapContainer
           center={coordinates ? [coordinates.lat, coordinates.lng] : [0, 0]}
           zoom={coordinates ? 10 : 2}
-          style={{ height: '500px', width: '100%' }}
+          style={{ height: '700px', width: '120%' }}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -187,7 +187,7 @@ const Alerts = () => {
               key={index}
               position={[feature.geometry.coordinates[1], feature.geometry.coordinates[0]]}
               icon={L.icon({
-                iconUrl: 'https://example.com/earthquake-icon.png', // Customize the icon
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/7190/7190566.png', // Customize the icon
                 iconSize: [25, 25],
               })}
             >
@@ -201,7 +201,7 @@ const Alerts = () => {
         </MapContainer>
       )}
 
-      {!riskData && !loading && <p>No risk data found for this location.</p>}
+      {!riskData && !loading && <p>No Essential Data Found For This Location.</p>}
     </div>
   );
 };
