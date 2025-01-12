@@ -121,7 +121,7 @@ const RiskMap = () => {
           <h3 className="font-bold text-gray-900 mb-4">Disease Outbreaks</h3>
           <div className="flex items-center space-x-2">
             <div className="w-4 h-4 rounded-full bg-yellow-500"></div>
-            <span className="text-gray-700">Moderate risk - Stay alert</span>
+            <span className="text-gray-700">Moderate risk - Social Distancing - Wear Masks - Stay alert</span>
           </div>
         </div>
 
