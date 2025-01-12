@@ -43,7 +43,85 @@ const mockSymptoms: Symptom[] = [
       'Apply cold or warm compress',
     ],
   },
+  {
+    id: '4',
+    name: 'Nausea',
+    severity: 'medium',
+    recommendations: [
+      'Sip on clear fluids',
+      'Rest and avoid strong odors or triggers',
+      'Try ginger tea or crackers',
+      'Seek medical attention if nausea persists or is accompanied by vomiting',
+    ],
+  },
+  {
+    id: '5',
+    name: 'Chest Pain',
+    severity: 'high',
+    recommendations: [
+      'Seek immediate medical attention',
+      'Stay calm and avoid physical activity',
+      'If pain is severe, call emergency services',
+      'Do not drive yourself to the hospital if symptoms are severe',
+    ],
+  },
+  {
+    id: '6',
+    name: 'Cough',
+    severity: 'medium',
+    recommendations: [
+      'Rest and stay hydrated',
+      'Use over-the-counter cough syrup or lozenges',
+      'Avoid smoking and secondhand smoke',
+      'Seek medical attention if cough lasts more than 3 weeks or is accompanied by blood',
+    ],
+  },
+  {
+    id: '7',
+    name: 'Sore Throat',
+    severity: 'low',
+    recommendations: [
+      'Gargle with warm salt water',
+      'Use throat lozenges or sprays',
+      'Stay hydrated and rest your voice',
+      'Seek medical attention if pain persists for more than 5 days',
+    ],
+  },
+  {
+    id: '8',
+    name: 'Fatigue',
+    severity: 'medium',
+    recommendations: [
+      'Ensure adequate sleep and rest',
+      'Eat a balanced diet with plenty of fruits and vegetables',
+      'Avoid overexerting yourself',
+      'Seek medical attention if fatigue persists for more than two weeks',
+    ],
+  },
+  {
+    id: '9',
+    name: 'Dizziness',
+    severity: 'medium',
+    recommendations: [
+      'Sit or lie down immediately to prevent falls',
+      'Avoid sudden movements or standing up quickly',
+      'Stay hydrated and avoid alcohol',
+      'Seek medical attention if dizziness persists or is accompanied by other symptoms like nausea or chest pain',
+    ],
+  },
+  {
+    id: '10',
+    name: 'Rash',
+    severity: 'low',
+    recommendations: [
+      'Keep the affected area clean and dry',
+      'Use over-the-counter anti-itch creams',
+      'Avoid scratching to prevent infection',
+      'Seek medical attention if rash is widespread or accompanied by other symptoms like fever',
+    ],
+  },
 ];
+
 
 const App = () => {
   const [selectedSymptom, setSelectedSymptom] = useState<Symptom | null>(null);
