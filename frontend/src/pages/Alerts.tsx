@@ -139,7 +139,7 @@ const Alerts = () => {
 
   return (
     <div className="risk-map-container">
-      <h1>Earthquake Risk Map</h1>
+      <h1>Earthquake Alerts Map</h1>
       <div className="relative">
         <input
           type="text"
