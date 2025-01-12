@@ -36,6 +36,14 @@ const mockBroadcasts: Broadcast[] = [
     area: 'Citywide'
   },
   {
+    id: '6',
+    type: 'update',
+    title: 'Cholera Testing ',
+    message: 'New testing locations available at Central Hospital and Community Center.',
+    timestamp: new Date().toISOString(),
+    area: 'Citywide'
+  },
+  {
     id: '5',
     type: 'update',
     title: 'Diarrhea Testing',
