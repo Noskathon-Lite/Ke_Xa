@@ -243,8 +243,8 @@ const RiskMap = () => {
 
   return (
 
-<div className="rounded-2xl	border-black	container mx-auto p-6 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500
-">
+<div className="rounded-2xl border-2 border-black container mx-auto p-6" 
+>
       <h1 className="text-4xl font-bold text-center my-8">Health Risk Map</h1>
       <div className="flex justify-center mb-8">
       <input

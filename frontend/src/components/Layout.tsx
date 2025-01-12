@@ -65,7 +65,7 @@ const Layout = () => {
 
         {/* Main Content */}
         <div className="flex-1 ml-72 px-6 py-7">
-          <header className="mb-6">
+          <header>
             <div className="flex justify-between items-center">
               {/* Main content header (optional) */}
             </div>
