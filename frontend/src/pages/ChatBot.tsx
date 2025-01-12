@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MessageCircle } from 'lucide-react';
 
 const Chatbot = () => {
@@ -56,16 +56,16 @@ const Chatbot = () => {
   return (
     <>
       <button
-        className="fixed bottom-6 right-6 bg-blue-600 text-white rounded-full p-5 shadow-lg hover:bg-blue-700 focus:outline-none transition duration-300"
+        className="fixed bottom-6 right-6 bg-blue-600 text-white rounded-full p-4 md:p-5 shadow-lg hover:bg-blue-700 focus:outline-none transition duration-300"
         onClick={() => setIsChatVisible((prev) => !prev)}
       >
-        <MessageCircle className="w-8 h-8" />
+        <MessageCircle className="w-6 h-6 md:w-8 md:h-8" />
       </button>
 
       {isChatVisible && (
-        <div className="fixed bottom-24 right-6 w-96 h-97 bg-gradient-to-tl from-blue-400 to-blue-600 shadow-xl border rounded-2xl flex flex-col">
+        <div className="fixed bottom-24 right-6 w-full sm:w-96 md:w-[400px] lg:w-[500px] h-[80vh] sm:h-96 bg-gradient-to-tl from-blue-400 to-blue-600 shadow-xl border rounded-2xl flex flex-col">
           <div className="p-4 bg-blue-800 text-white font-semibold flex justify-between items-center rounded-t-2xl shadow-lg">
-            <span>AI Health Assistant</span>
+            <span className="text-sm sm:text-lg">AI Health Assistant</span>
             <button
               className="text-white text-xl"
               onClick={() => setIsChatVisible(false)}
@@ -75,14 +75,14 @@ const Chatbot = () => {
           </div>
 
           {/* This is the scrollable area */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
             {messages.map((msg, index) => (
               <div
                 key={index}
                 className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[75%] p-4 rounded-lg text-sm ${msg.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+                  className={`max-w-[70%] sm:max-w-[75%] p-4 rounded-lg text-sm ${msg.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
                 >
                   {msg.text}
                 </div>
@@ -94,19 +94,19 @@ const Chatbot = () => {
                 <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce"></div>
                 <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce200"></div>
                 <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce400"></div>
-                <span className="text-white">Typing...</span>
+                <span className="text-white text-sm">Typing...</span>
               </div>
             )}
 
             {loading && (
-              <div className="text-center text-white">Generating response...</div>
+              <div className="text-center text-white text-sm">Generating response...</div>
             )}
           </div>
 
-          <div className="p-6 border-t bg-gray-100 rounded-b-2xl">
+          <div className="p-4 sm:p-6 border-t bg-gray-100 rounded-b-2xl">
             <input
               type="text"
-              className="w-full p-4 border rounded-xl shadow-md"
+              className="w-full p-3 sm:p-4 border rounded-xl shadow-md"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => {

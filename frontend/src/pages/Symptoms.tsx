@@ -109,17 +109,7 @@ const mockSymptoms: Symptom[] = [
       'Seek medical attention if dizziness persists or is accompanied by other symptoms like nausea or chest pain',
     ],
   },
-  {
-    id: '10',
-    name: 'Rash',
-    severity: 'low',
-    recommendations: [
-      'Keep the affected area clean and dry',
-      'Use over-the-counter anti-itch creams',
-      'Avoid scratching to prevent infection',
-      'Seek medical attention if rash is widespread or accompanied by other symptoms like fever',
-    ],
-  },
+  
 ];
 
 
