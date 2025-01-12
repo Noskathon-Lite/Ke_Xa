@@ -7,11 +7,11 @@ const Navigation = () => {
   const location = useLocation();
   
   const links = [
-    { to: '/', icon: Map, label: 'Risk Heat-Map' },
+    { to: '/', icon: Map, label: 'Health Risk Heat-Map' },
     { to: '/alerts', icon: Bell, label: 'EarthQuake Alerts' },
-    { to: '/ambulance', icon: Ambulance, label: 'Ambulance' },
-    { to: '/symptoms', icon: Activity, label: 'Symptoms' },
-    { to: '/broadcast', icon: Radio, label: 'Broadcast' },
+    { to: '/ambulance', icon: Ambulance, label: 'Ambulance Co-ordination' },
+    { to: '/symptoms', icon: Activity, label: 'A.I. Powered Symptoms Checker' },
+    { to: '/broadcast', icon: Radio, label: 'Emergency Broadcast' },
   ];
 
   
