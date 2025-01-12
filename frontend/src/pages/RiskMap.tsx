@@ -97,7 +97,7 @@ const RiskMap = () => {
         setMapCenter({ lat: parseFloat(lat), lon: parseFloat(lon) });
         fetchRiskAlerts(parseFloat(lat), parseFloat(lon));
       } else {
-        alert("Location not found. Please try another search.");
+        alert("Location not found. Please try another searching another location.");
       }
     } catch (error) {
       console.error("Error performing search:", error);
