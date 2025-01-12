@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import debounce from "lodash.debounce"; // Use lodash to debounce the API calls
 
 // Fix default icon for Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -38,12 +39,12 @@ const RiskMap = () => {
   const fetchRiskAlerts = async (lat: number, lon: number) => {
     try {
       const response = await fetch(
-        https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=${lat}&longitude=${lon}&maxradiuskm=200
+        `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=${lat}&longitude=${lon}&maxradiuskm=200`
       );
       const data = await response.json();
       const alerts = data.features.map((feature: any) => ({
         id: feature.id,
-        title: Earthquake: M${feature.properties.mag},
+        title: `Earthquake: M${feature.properties.mag}`,
         description: feature.properties.place,
         location: { lat: feature.geometry.coordinates[1], lng: feature.geometry.coordinates[0] },
       }));
@@ -53,18 +54,34 @@ const RiskMap = () => {
     }
   };
 
-  // Fetch location suggestions using Nominatim API
-  const fetchSuggestions = async (query: string) => {
+  // Debounced fetch for location suggestions
+  const fetchSuggestions = debounce(async (query: string) => {
     if (!query.trim()) return;
     try {
       const response = await fetch(
-        https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1&limit=5
+        `https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1&limit=5`
       );
       const data = await response.json();
       setSuggestions(data);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
     }
+  }, 500); // debounce for 500ms delay
+
+  // Handle search input change
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    fetchSuggestions(value);
+  };
+
+  // Handle search result click
+  const handleSearchResultClick = async (place: any) => {
+    const { lat, lon } = place;
+    setMapCenter({ lat: parseFloat(lat), lon: parseFloat(lon) });
+    fetchRiskAlerts(parseFloat(lat), parseFloat(lon));
+    setSearchQuery(place.display_name);
+    setSuggestions([]);
   };
 
   // Handle search submission
@@ -72,7 +89,7 @@ const RiskMap = () => {
     if (!searchQuery.trim()) return;
     try {
       const response = await fetch(
-        https://nominatim.openstreetmap.org/search?q=${searchQuery}&format=json&limit=1
+        `https://nominatim.openstreetmap.org/search?q=${searchQuery}&format=json&limit=1`
       );
       const data = await response.json();
       if (data.length > 0) {
@@ -96,10 +113,7 @@ const RiskMap = () => {
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              fetchSuggestions(e.target.value);
-            }}
+            onChange={handleSearchInputChange}
             placeholder="Search for a location"
             className="border px-4 py-2 rounded-lg w-full"
           />
@@ -117,12 +131,7 @@ const RiskMap = () => {
               <li
                 key={suggestion.place_id}
                 className="cursor-pointer hover:bg-gray-200 p-2"
-                onClick={() => {
-                  setSearchQuery(suggestion.display_name);
-                  setMapCenter({ lat: parseFloat(suggestion.lat), lon: parseFloat(suggestion.lon) });
-                  fetchRiskAlerts(parseFloat(suggestion.lat), parseFloat(suggestion.lon));
-                  setSuggestions([]);
-                }}
+                onClick={() => handleSearchResultClick(suggestion)}
               >
                 {suggestion.display_name}
               </li>
