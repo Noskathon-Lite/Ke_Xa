@@ -4,22 +4,50 @@
     margin: 0 auto;
     padding: 20px;
     text-align: center;
-  }
-  
-  .search-input {
+}
+
+.search-input {
     width: 80%;
     padding: 10px;
     margin-bottom: 20px;
     font-size: 16px;
-  }
-  
-  h1 {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+.search-input:focus {
+    border-color: #007bff; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+h1 {
     font-size: 24px;
     margin-bottom: 20px;
-  }
-  
-  .MapContainer {
+}
+
+.MapContainer {
     height: 500px;
     width: 100%;
-  }
-  
+}
+
+/* Suggestions List */
+.suggestions-list {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-top: 1px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0; /* Highlight on hover */
+}

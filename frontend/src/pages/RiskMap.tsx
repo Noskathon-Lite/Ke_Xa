@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Circle, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Circle, Popup, useMap } from 'react-leaflet'; // <-- Import useMap here
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
 import { HealthRisk } from '../types';
@@ -38,32 +38,33 @@ const RiskMap = () => {
     }
   };
 
-  // Fetch the health risk data (AQI, air pollution, etc.)
+  // Fetch the health risk data (AQI, air pollution, etc.) for a 100 km radius
   const fetchHealthRiskData = async (lat: number, lng: number) => {
     setLoading(true);
     setHealthRiskData([]); // Clear previous health risk data
     try {
-      // Fetch AQI data using OpenWeatherMap API (free tier)
-      const aqiResponse = await axios.get(
-        `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lng}&appid=${airQualityApiKey}`
-      );
+      // Fetch AQI data for a 100 km radius (simplified approach for now)
+      const coordinatesWithinRadius = getNearbyCoordinates(lat, lng);
 
-      const aqiData = aqiResponse.data.list[0].components;
+      const newHealthRiskData: HealthRisk[] = [];
 
-      const newHealthRiskData: HealthRisk[] = [
-        {
-          id: '1',
+      for (const { lat: nearbyLat, lng: nearbyLng } of coordinatesWithinRadius) {
+        const aqiResponse = await axios.get(
+          `https://api.openweathermap.org/data/2.5/air_pollution?lat=${nearbyLat}&lon=${nearbyLng}&appid=${airQualityApiKey}`
+        );
+
+        const aqiData = aqiResponse.data.list[0].components;
+        const aqiLevel = determineAQILevel(aqiData.pm2_5);
+
+        newHealthRiskData.push({
+          id: `${nearbyLat}-${nearbyLng}`,
           type: 'air',
-          level: aqiData.pm2_5 > 35 ? 'high' : aqiData.pm2_5 > 12 ? 'medium' : 'low',
-          location: { lat, lng },
+          level: aqiLevel,
+          location: { lat: nearbyLat, lng: nearbyLng },
           description: `Air quality index (PM2.5): ${aqiData.pm2_5}`,
-          recommendations: [
-            'Avoid outdoor activities if sensitive to pollution',
-            'Wear an N95 mask if necessary',
-          ],
-        },
-        // You can add more health risk data from different APIs here (e.g., disease alerts, water contamination)
-      ];
+          recommendations: getHealthRecommendations(aqiLevel),
+        });
+      }
 
       setHealthRiskData(newHealthRiskData);
     } catch (error) {
@@ -72,6 +73,74 @@ const RiskMap = () => {
       setLoading(false);
     }
   };
+
+  // Get nearby coordinates (simplified approach, assumes nearby locations are within the 100 km radius)
+  const getNearbyCoordinates = (lat: number, lng: number) => {
+    const nearbyCoordinates = [];
+    const radius = 0.9; // Roughly 100 km in latitude/longitude
+
+    // Example nearby locations (to be expanded based on actual needs)
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        nearbyCoordinates.push({ lat: lat + i * radius, lng: lng + j * radius });
+      }
+    }
+
+    return nearbyCoordinates;
+  };
+
+  // Determine the AQI level based on PM2.5 data
+  const determineAQILevel = (pm25: number) => {
+    if (pm25 > 35) return 'high';
+    if (pm25 > 12) return 'medium';
+    return 'low';
+  };
+
+  // Get health recommendations based on AQI level
+  const getHealthRecommendations = (level: string) => {
+    switch (level) {
+      case 'high':
+        return [
+          'Avoid outdoor activities if sensitive to pollution',
+          'Wear an N95 mask if necessary',
+        ];
+      case 'medium':
+        return [
+          'Limit outdoor activities if sensitive to pollution',
+          'Take breaks indoors regularly',
+        ];
+      case 'low':
+        return ['Enjoy outdoor activities freely'];
+      default:
+        return [];
+    }
+  };
+
+  // Get the user's current location using the Geolocation API
+  const getUserLocation = () => {
+    setLoading(true);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setCoordinates({ lat: latitude, lng: longitude });
+          fetchHealthRiskData(latitude, longitude); // Fetch health risk data based on user's location
+        },
+        (error) => {
+          setError('Error fetching user location.');
+          setLoading(false);
+        }
+      );
+    } else {
+      setError('Geolocation is not supported by this browser.');
+      setLoading(false);
+    }
+  };
+
+  // Call getUserLocation when the component mounts
+  useEffect(() => {
+    getUserLocation();
+  }, []);
 
   // Handle the search input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,6 +152,29 @@ const RiskMap = () => {
     e.preventDefault();
     if (location.trim()) {
       fetchCoordinates(location);
+    }
+  };
+
+  // Update the map view whenever coordinates change
+  const UpdateMapView = () => {
+    const map = useMap();
+    if (coordinates) {
+      map.setView([coordinates.lat, coordinates.lng], 10); // Zoom level 10
+    }
+    return null;
+  };
+
+  // Function to get the color based on risk level
+  const getRiskColor = (level: string) => {
+    switch (level) {
+      case 'high':
+        return 'red';
+      case 'medium':
+        return 'orange';
+      case 'low':
+        return 'green';
+      default:
+        return 'blue'; // default color
     }
   };
 
@@ -110,13 +202,22 @@ const RiskMap = () => {
         <div className="h-[600px] rounded-lg overflow-hidden">
           <MapContainer
             center={coordinates ? [coordinates.lat, coordinates.lng] : [27.7008, 85.3000]}
-            zoom={coordinates ? 13 : 2}
+            zoom={coordinates ? 10 : 13} // Set zoom to 10 for user location or search location
             className="h-full w-full"
+            whenCreated={map => {
+              // This ensures the map is updated with the initial user location when the map is created
+              if (coordinates) {
+                map.setView([coordinates.lat, coordinates.lng], 10);
+              }
+            }}
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
+
+            {/* Update the map view based on the coordinates */}
+            <UpdateMapView />
 
             {healthRiskData.map((risk) => (
               <Circle
@@ -126,18 +227,17 @@ const RiskMap = () => {
                 pathOptions={{
                   color: getRiskColor(risk.level),
                   fillColor: getRiskColor(risk.level),
-                  fillOpacity: 0.5,
+                  fillOpacity: 0.3,
                 }}
               >
                 <Popup>
-                  <div className="p-2">
-                    <h3 className="font-semibold">{risk.description}</h3>
-                    <ul className="mt-2 text-sm">
-                      {risk.recommendations.map((rec, index) => (
-                        <li key={index}>• {rec}</li>
-                      ))}
-                    </ul>
-                  </div>
+                  <h3 className="text-lg font-semibold">{`Risk Level: ${risk.level}`}</h3>
+                  <p>{risk.description}</p>
+                  <ul>
+                    {risk.recommendations.map((rec, index) => (
+                      <li key={index}>{rec}</li>
+                    ))}
+                  </ul>
                 </Popup>
               </Circle>
             ))}
@@ -146,20 +246,6 @@ const RiskMap = () => {
       </div>
     </div>
   );
-};
-
-// Helper function to determine the color based on health risk level
-const getRiskColor = (level: string) => {
-  switch (level) {
-    case 'high':
-      return '#ef4444';
-    case 'medium':
-      return '#f59e0b';
-    case 'low':
-      return '#10b981';
-    default:
-      return '#10b981';
-  }
 };
 
 export default RiskMap;
