@@ -1,13 +1,8 @@
-import React, { useState } from 'react';
-import { MessageCircle } from 'lucide-react';
-import RiskMap from './RiskMap'; // Assuming RiskMap is in the same folder
+import React from 'react';
+import { MapContainer, TileLayer, Circle, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import { HealthRisk } from '../types';
 
-<<<<<<< HEAD
-const App = () => {
-  const [isChatVisible, setIsChatVisible] = useState(false);
-  const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
-  const [input, setInput] = useState('');
-=======
 const mockRisks: HealthRisk[] = [
   {
     id: '1',
@@ -16,14 +11,6 @@ const mockRisks: HealthRisk[] = [
     location: { lat: 27.6960, lng: 85.3451 },
     description: 'High air pollution levels detected',
     recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
-  },
-  {
-    id: '17',
-    type: 'disease',
-    level: 'high',
-    location: { lat: 27.6960, lng: 85.3451 },
-    description: 'HMPC Virus Infected area',
-    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside & Sanitize your hand properly'],
   },
   {
     id: '3',
@@ -39,14 +26,6 @@ const mockRisks: HealthRisk[] = [
     level: 'high',
     location: { lat: 27.6787, lng: 85.3237 },
     description: 'High air pollution levels detected',
-    recommendations: ['Avoid outdoor activities', 'Dont drik water without filteration'],
-  },
-  {
-    id: '16',
-    type: 'water',
-    level: 'high',
-    location: { lat: 27.6787, lng: 85.3237 },
-    description: 'High water pollution levels detected',
     recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
   },
   {
@@ -66,71 +45,96 @@ const mockRisks: HealthRisk[] = [
     recommendations: ['Practice social distancing', 'Get vaccinated'],
   }
 ];
->>>>>>> c310a7da4c485ff39d03de03ed42929cc168ea99
 
-  const mockRisks = [
-    { id: '1', type: 'air', level: 'high', location: { lat: 27.6960, lng: 85.3451 }, description: 'High air pollution levels detected', recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'] },
-    { id: '2', type: 'disease', level: 'medium', location: { lat: 27.7272, lng: 85.3340 }, description: 'Increased flu cases reported', recommendations: ['Practice social distancing', 'Get vaccinated'] },
-    // Add more mock data here
-  ];
+const getRiskColor = (level: HealthRisk['level']) => {
+  switch (level) {
+    case 'high':
+      return '#ef4444';
+    case 'medium':
+      return '#f59e0b';
+    case 'low':
+      return '#10b981';
+    default:
+      return '#10b981';
+  }
+};
 
-  const sendMessage = () => {
-    if (input.trim()) {
-      const userMessage = { sender: 'user', text: input };
-      setMessages(prev => [...prev, userMessage]);
-
-      let botMessage = {
-        sender: 'bot',
-        text: 'Please ask about the health risk in your area or the safest place.',
-      };
-
-      // Simple query processing (example)
-      if (input.toLowerCase().includes('disease')) {
-        const diseaseRisks = mockRisks.filter(risk => risk.type === 'disease');
-        botMessage.text = `The most common disease outbreaks are in these locations:\n${diseaseRisks.map(risk => `${risk.description} at location (${risk.location.lat}, ${risk.location.lng})`).join('\n')}`;
-      } else if (input.toLowerCase().includes('safe')) {
-        const safeLocations = mockRisks.filter(risk => risk.level === 'low');
-        botMessage.text = `Safe areas with low health risks include:\n${safeLocations.map(risk => `Safe at location (${risk.location.lat}, ${risk.location.lng})`).join('\n')}`;
-      }
-
-      setMessages(prev => [...prev, botMessage]);
-      setInput('');
-    }
-  };
-
+const RiskMap = () => {
   return (
-    <div>
-      <RiskMap />
-      <button className="fixed bottom-4 right-4 bg-blue-600 text-white rounded-full p-4 shadow-lg hover:bg-blue-700 focus:outline-none"
-        onClick={() => setIsChatVisible(prev => !prev)}>
-        <MessageCircle className="w-6 h-6" />
-      </button>
+    <div className="space-y-6 p-4 md:p-8 bg-gray-100 min-h-screen">
+      {/* Header Section */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-2xl font-bold text-gray-900">Health Risk Heat Map</h2>
+        <p className="text-gray-600 mt-2">Monitor health risks in your area and take necessary precautions.</p>
+      </div>
 
-      {isChatVisible && (
-        <div className="fixed bottom-16 right-4 w-80 h-96 bg-white shadow-lg border rounded-lg flex flex-col">
-          <div className="p-4 bg-blue-600 text-white font-semibold flex justify-between items-center">
-            <span>ChatBot</span>
-            <button className="text-white" onClick={() => setIsChatVisible(false)}>×</button>
-          </div>
-
-          <div className="flex-1 p-4 overflow-y-auto space-y-4">
-            {messages.map((msg, index) => (
-              <div key={index} className={`mb-2 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                <div className={`inline-block p-2 rounded-lg ${msg.sender === 'user' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}>
-                  {msg.text}
-                </div>
-              </div>
+      {/* Map Section */}
+      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="h-[600px] w-full">
+          <MapContainer
+            center={[27.678156, 85.34905]} // Kathmandu
+            zoom={13}
+            className="h-full w-full"
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            {mockRisks.map((risk) => (
+              <Circle
+                key={risk.id}
+                center={[risk.location.lat, risk.location.lng]}
+                radius={500}
+                pathOptions={{
+                  color: getRiskColor(risk.level),
+                  fillColor: getRiskColor(risk.level),
+                  fillOpacity: 0.5,
+                }}
+              >
+                <Popup>
+                  <div className="p-2">
+                    <h3 className="font-semibold text-lg">{risk.description}</h3>
+                    <ul className="mt-2 text-sm text-gray-700">
+                      {risk.recommendations.map((rec, index) => (
+                        <li key={index}>• {rec}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </Popup>
+              </Circle>
             ))}
-          </div>
+          </MapContainer>
+        </div>
+      </div>
 
-          <div className="p-4 border-t flex space-x-2">
-            <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder="Ask about health risks..." className="w-full p-2 border rounded-lg" />
-            <button onClick={sendMessage} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Send</button>
+      {/* Summary Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="font-bold text-gray-900 mb-4">Air Quality</h3>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 rounded-full bg-red-500"></div>
+            <span className="text-gray-700">Poor - Take precautions</span>
           </div>
         </div>
-      )}
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="font-bold text-gray-900 mb-4">Disease Outbreaks</h3>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 rounded-full bg-yellow-500"></div>
+            <span className="text-gray-700">Moderate risk - Stay alert</span>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="font-bold text-gray-900 mb-4">Water Quality</h3>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 rounded-full bg-green-500"></div>
+            <span className="text-gray-700">Good - Safe to use</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default App;
+export default RiskMap;
