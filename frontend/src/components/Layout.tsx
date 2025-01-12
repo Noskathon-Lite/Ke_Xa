@@ -8,7 +8,7 @@ const Navigation = () => {
   
   const links = [
     { to: '/', icon: Map, label: 'Risk Heat-Map' },
-    { to: '/alerts', icon: Bell, label: 'Alerts' },
+    { to: '/alerts', icon: Bell, label: 'EarthQuake Alerts' },
     { to: '/ambulance', icon: Ambulance, label: 'Ambulance' },
     { to: '/symptoms', icon: Activity, label: 'Symptoms' },
     { to: '/broadcast', icon: Radio, label: 'Broadcast' },
