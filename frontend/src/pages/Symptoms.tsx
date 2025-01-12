@@ -33,6 +33,17 @@ const mockSymptoms: Symptom[] = [
     ],
   },
   {
+    id: '4',
+    name: 'Chest Pain ',
+    severity: 'high',
+    recommendations: [
+      'Seek immediate medical attention',
+      'Try to remain calm',
+      'Sit upright to help breathing',
+      'Use prescribed inhaler if available',
+    ],
+  },
+  {
     id: '3',
     name: 'Headache',
     severity: 'low',
