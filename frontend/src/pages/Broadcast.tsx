@@ -60,7 +60,7 @@ const Broadcast = () => {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-900 flex items-center">
             <Radio className="w-6 h-6 mr-2" />
-            Emergency Broadcast System
+            Emergency Broadcasting System
           </h2>
           <button
             onClick={() => setSubscribed(!subscribed)}
