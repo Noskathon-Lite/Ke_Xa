@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, ChevronRight, AlertCircle } from 'lucide-react';
+import { Activity, ChevronRight, AlertCircle, MessageCircle } from 'lucide-react';
 import axios from 'axios';
 
 interface Symptom {
@@ -61,8 +61,8 @@ const App = () => {
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isChatVisible, setIsChatVisible] = useState(false);
 
-  // Add a message when a symptom is selected
   useEffect(() => {
     if (selectedSymptom) {
       const autoMessage = {
@@ -84,21 +84,17 @@ const App = () => {
     setLoading(true);
 
     try {
-      // Replace with your AI/ML API endpoint and adjust payload
       const response = await axios.post(
         'https://your-ai-ml-api-endpoint.com/predict',
-        {
-          input: input, // Customize the payload according to your API requirements
-        },
+        { input },
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `f6c52088b5744c6aa2508c2eea635bcd`, // Replace with your API key
+            Authorization: `Bearer YOUR_API_KEY`,
           },
         }
       );
 
-      // Adjust the response parsing based on your API response structure
       const botMessage = {
         sender: 'bot',
         text: response.data.output || 'No response from AI.',
@@ -129,7 +125,7 @@ const App = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen relative">
       {/* Symptom Checker Section */}
       <div className="flex-1 space-y-6 p-6">
         <div className="bg-white rounded-lg shadow-sm p-6">
@@ -191,60 +187,65 @@ const App = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start space-x-3">
-          <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5" />
-          <div>
-            <h3 className="font-semibold text-yellow-900">Important Notice</h3>
-            <p className="text-sm text-yellow-800 mt-1">
-              This symptom checker is for informational purposes only and should not replace
-              professional medical advice. If you're experiencing severe symptoms, please seek
-              immediate medical attention.
-            </p>
+      {/* ChatBot Button and Section */}
+      <button
+        className="fixed bottom-4 right-4 bg-blue-600 text-white rounded-full p-4 shadow-lg hover:bg-blue-700 focus:outline-none"
+        onClick={() => setIsChatVisible((prev) => !prev)}
+      >
+        <MessageCircle className="w-6 h-6" />
+      </button>
+
+      {isChatVisible && (
+        <div className="fixed bottom-16 right-4 w-80 h-96 bg-white shadow-lg border rounded-lg flex flex-col">
+          <div className="p-4 bg-blue-600 text-white font-semibold flex justify-between items-center">
+            <span>ChatBot</span>
+            <button
+              className="text-white"
+              onClick={() => setIsChatVisible(false)}
+            >
+              ×
+            </button>
+          </div>
+
+          <div className="flex-1 p-4 overflow-y-auto space-y-4">
+            {messages.map((msg, index) => (
+              <div
+                key={index}
+                className={`mb-2 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}
+              >
+                <div
+                  className={`inline-block p-2 rounded-lg ${
+                    msg.sender === 'user'
+                      ? 'bg-blue-100 text-blue-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+            {loading && <div className="text-gray-500 text-center">Typing...</div>}
+          </div>
+
+          <div className="p-4 border-t flex space-x-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask about symptoms..."
+              className="w-full p-2 border rounded-lg"
+            />
+            <button
+              onClick={sendMessage}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            >
+              Send
+            </button>
           </div>
         </div>
-      </div>
-
-      {/* ChatBot Section */}
-      <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-lg border-l flex flex-col">
-        <div className="p-4 bg-blue-600 text-white font-semibold">ChatBot</div>
-
-        <div className="flex-1 p-4 overflow-y-auto space-y-4">
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`mb-2 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}
-            >
-              <div
-                className={`inline-block p-2 rounded-lg ${
-                  msg.sender === 'user'
-                    ? 'bg-blue-100 text-blue-800'
-                    : 'bg-gray-100 text-gray-800'
-                }`}
-              >
-                {msg.text}
-              </div>
-            </div>
-          ))}
-          {loading && <div className="text-gray-500 text-center">Typing...</div>}
-        </div>
-
-        <div className="p-4 border-t flex space-x-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about symptoms..."
-            className="w-full p-2 border rounded-lg"
-          />
-          <button
-            onClick={sendMessage}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-          >
-            Send
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
