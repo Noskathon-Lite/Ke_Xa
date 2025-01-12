@@ -13,6 +13,14 @@ const mockRisks: HealthRisk[] = [
     recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
   },
   {
+    id: '17',
+    type: 'disease',
+    level: 'high',
+    location: { lat: 27.6960, lng: 85.3451 },
+    description: 'HMPC Virus Infected area',
+    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside & Sanitize your hand properly'],
+  },
+  {
     id: '3',
     type: 'disease',
     level: 'high',
