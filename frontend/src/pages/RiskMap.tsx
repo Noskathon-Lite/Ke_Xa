@@ -151,6 +151,9 @@ const RiskMap = () => {
     return nearbyCoordinates;
   };
 
+
+
+
   // Determine the AQI level based on PM2.5 data
   const determineAQILevel = (pm25: number) => {
     if (pm25 > 35) return 'high';
@@ -163,7 +166,7 @@ const RiskMap = () => {
     switch (level) {
       case 'high':
         return [
-          'Avoid Outdoor Activities If Sensitive To Pollution',
+          'Avoid outdoor activities if sensitive to pollution',
           'Wear an N95 mask if necessary',
         ];
       case 'medium':
@@ -190,12 +193,12 @@ const RiskMap = () => {
           fetchNearestCityData(latitude, longitude); // Fetch nearest city data
         },
         (error) => {
-          setError('Error Fetching Users Location.');
+          setError('Error fetching user location.');
           setLoading(false);
         }
       );
     } else {
-      setError('Geo-Location is not supported by this Browser, Try Using different Browser');
+      setError('Geolocation is not supported by this browser.');
       setLoading(false);
     }
   };
@@ -239,27 +242,26 @@ const RiskMap = () => {
   };
 
   return (
-    <div className="risk-map">
-      <h1>Health Risk Map</h1>
-     
-      <form onSubmit={handleSearchSubmit} className="flex space-x-2 mb-4">
-  <input
-    type="text"
-    value={location}
-    onChange={handleSearchChange}
-    placeholder="Enter a location"
-    className="w-full sm:w-72 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
-  <button
-    type="submit"
-    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-  >
-    Search
-  </button>
-</form>
 
+<div className="rounded-2xl	border-black	container mx-auto p-6 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500
+">
+      <h1 className="text-4xl font-bold text-center my-8">Health Risk Map</h1>
+      <div className="flex justify-center mb-8">
+      <input
+          type="text"
+          placeholder="Search Location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              fetchCoordinates(location);
+            }
+          }}
+          className="w-full p-4 rounded-lg shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 text-lg"
+        />
+      </div>
       <div className="map-container">
-        <MapContainer center={[27.7172, 85.3240]} zoom={50} scrollWheelZoom={true} style={{ height: '600px', width: '100%' }}>
+        <MapContainer center={[27.7172, 85.3240]} zoom={10} scrollWheelZoom={false} style={{ height: '600px', width: '100%' }}>
           <UpdateMapView />
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
