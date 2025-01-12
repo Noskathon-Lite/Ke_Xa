@@ -1,223 +1,207 @@
-// import React from 'react';
-// import { Bell, AlertTriangle, Info } from 'lucide-react';
-// import { Alert } from '../types';
-
-// const mockAlerts: Alert[] = [
-//   {
-//     id: '1',
-//     type: 'earthquake',
-//     severity: 'high',
-//     title: 'Earthquake Warning',
-//     description: 'Magnitude 5.2 earthquake detected 50km north',
-//     location: { lat: 34.0522, lng: -118.2437 },
-//     timestamp: new Date().toISOString(),
-//     instructions: [
-//       'Move to open areas',
-//       'Stay away from buildings',
-//       'Follow emergency protocols'
-//     ]
-//   },
-//   {
-//     id: '2',
-//     type: 'health',
-//     severity: 'medium',
-//     title: 'COVID-19 Alert',
-//     description: 'Increased cases in your area',
-//     location: { lat: 34.0522, lng: -118.2437 },
-//     timestamp: new Date().toISOString(),
-//     instructions: [
-//       'Wear masks in public',
-//       'Maintain social distance',
-//       'Get tested if symptomatic'
-//     ]
-//   }
-// ];
-
-// const getSeverityColor = (severity: Alert['severity']) => {
-//   switch (severity) {
-//     case 'high':
-//       return 'bg-red-100 text-red-800 border-red-200';
-//     case 'medium':
-//       return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-//     case 'low':
-//       return 'bg-green-100 text-green-800 border-green-200';
-//     default:
-//       return 'bg-gray-100 text-gray-800 border-gray-200';
-//   }
-// };
-
-// const Alerts = () => {
-//   return (
-//     <div className="space-y-6">
-//       <div className="bg-white rounded-lg shadow-sm p-6">
-//         <div className="flex items-center justify-between mb-6">
-//           <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-//             <Bell className="w-6 h-6 mr-2" />
-//             Emergency Alerts
-//           </h2>
-//           <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-//             Test Alert System
-//           </button>
-//         </div>
-
-//         <div className="space-y-4">
-//           {mockAlerts.map((alert) => (
-//             <div
-//               key={alert.id}
-//               className={`border rounded-lg p-4 ${getSeverityColor(
-//                 alert.severity
-//               )}`}
-//             >
-//               <div className="flex items-start justify-between">
-//                 <div className="flex items-start space-x-3">
-//                   <AlertTriangle className="w-5 h-5 mt-1" />
-//                   <div>
-//                     <h3 className="font-semibold">{alert.title}</h3>
-//                     <p className="text-sm mt-1">{alert.description}</p>
-//                     <div className="mt-3">
-//                       <h4 className="text-sm font-semibold mb-2">Instructions:</h4>
-//                       <ul className="list-disc list-inside text-sm space-y-1">
-//                         {alert.instructions.map((instruction, index) => (
-//                           <li key={index}>{instruction}</li>
-//                         ))}
-//                       </ul>
-//                     </div>
-//                   </div>
-//                 </div>
-//                 <span className="text-xs">
-//                   {new Date(alert.timestamp).toLocaleTimeString()}
-//                 </span>
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-
-//       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start space-x-3">
-//         <Info className="w-5 h-5 text-blue-500 mt-0.5" />
-//         <div>
-//           <h3 className="font-semibold text-blue-900">Stay Prepared</h3>
-//           <p className="text-sm text-blue-800 mt-1">
-//             Enable notifications to receive real-time alerts about emergencies in your area.
-//           </p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Alerts;
-
-
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import '../assets/css/riskmap.css';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import L from 'leaflet';
 import axios from 'axios';
-import { Bell, AlertTriangle, Info } from 'lucide-react';
-import { Alert } from '../types';
 
-const getSeverityColor = (severity) => {
-  switch (severity) {
-    case 'high':
-      return 'bg-red-100 text-red-800 border-red-200';
-    case 'medium':
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case 'low':
-      return 'bg-green-100 text-green-800 border-green-200';
-    default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-  }
-};
+// Ensure your API key is securely stored here
+const apiKey = 'd0f371c0dce646bc95b2bbf48ce1e2c2'; // OpenCage API Key
 
 const Alerts = () => {
-  const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [coordinates, setCoordinates] = useState<any>(null); // User's coordinates
+  const [riskData, setRiskData] = useState<any>(null); // Earthquake risk data
+  const [loading, setLoading] = useState<boolean>(false); // Loading state
+  const [location, setLocation] = useState<string>(''); // Search location state
+  const [suggestions, setSuggestions] = useState<any[]>([]); // Search suggestions
+  const [loadingSuggestions, setLoadingSuggestions] = useState<boolean>(false); // Loading state for suggestions
 
+  // Function to detect user's current location
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setCoordinates({ lat: latitude, lng: longitude });
+        },
+        (error) => {
+          console.error('Error detecting location', error);
+        }
+      );
+    } else {
+      console.log('Geolocation is not supported by this browser.');
+    }
+  };
+
+  // Fetch earthquake risk data based on coordinates
+  const fetchRiskData = async () => {
+    if (!coordinates) return;
+
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=${coordinates.lat}&longitude=${coordinates.lng}&maxradiuskm=200`
+      );
+      setRiskData(response.data.features);
+    } catch (error) {
+      console.error('Error fetching risk data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch risk data whenever coordinates change
   useEffect(() => {
-    const fetchAlerts = async () => {
-      try {
-        const response = await axios.get('https://bipadportal.gov.np/api/v1/alert/');
-        const fetchedAlerts = response.data.data.map((alert) => ({
-          id: alert.id,
-          type: alert.event_type,
-          severity: alert.severity.toLowerCase(),
-          title: alert.title,
-          description: alert.description,
-          location: alert.location,
-          timestamp: alert.timestamp,
-          instructions: alert.instructions || ['No specific instructions provided.'],
-        }));
-        setAlerts(fetchedAlerts);
-      } catch (err) {
-        setError('Failed to fetch alerts. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (coordinates) {
+      fetchRiskData();
+    }
+  }, [coordinates]);
 
-    fetchAlerts();
+  // Fetch user's location when the component mounts
+  useEffect(() => {
+    getUserLocation();
   }, []);
 
-  if (loading) {
-    return <div className="text-center py-10">Loading alerts...</div>;
-  }
+  const UpdateMapView = () => {
+    const map = useMap();
+    if (coordinates) {
+      map.setView([coordinates.lat, coordinates.lng], 10); // Zoom level 10
+    }
+    return null;
+  };
 
-  if (error) {
-    return <div className="text-center text-red-600 py-10">{error}</div>;
-  }
+  // Handle search input change for suggestions
+  const handleSearch = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLocation(event.target.value);
+    console.log("Search value: ", event.target.value); // Debug log
+
+    // Check if the search term is not empty and is more than one character
+    if (event.target.value.trim() === '' || event.target.value.length < 2) {
+      setSuggestions([]);
+      return; // Don't make the API request if the search term is too short
+    }
+
+    setLoadingSuggestions(true);
+
+    try {
+      const response = await axios.get(
+        `https://api.opencagedata.com/geocode/v1/json?q=${event.target.value}&key=${apiKey}`
+      );
+      console.log("API Response: ", response.data); // Debug log
+
+      const data = response.data;
+      if (data.results && data.results.length > 0) {
+        setSuggestions(data.results);
+      } else {
+        setSuggestions([]); // No results, clear suggestions
+      }
+    } catch (error) {
+      console.error('Error fetching suggestions:', error);
+      setSuggestions([]); // Clear suggestions on error
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  };
+
+  // Handle suggestion selection (when a suggestion is clicked)
+  const handleSuggestionSelect = (lat: number, lng: number) => {
+    setCoordinates({ lat, lng });
+    setSuggestions([]); // Clear suggestions after selection
+    setLocation(''); // Optionally clear the input field after selection
+  };
+
+  // Handle key press (Enter) for searching and fetching risk data
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      // When user presses Enter, fetch data based on the location
+      if (location.trim() !== '') {
+        fetchLocationData(location); // Call a function to fetch data for the entered location
+      }
+    }
+  };
+
+  // Fetch location data (coordinates) for the given location
+  const fetchLocationData = async (location: string) => {
+    try {
+      const response = await axios.get(
+        `https://api.opencagedata.com/geocode/v1/json?q=${location}&key=${apiKey}`
+      );
+      const { results } = response.data;
+      if (results && results.length > 0) {
+        const { lat, lng } = results[0].geometry;
+        setCoordinates({ lat, lng });
+      } else {
+        console.log('No location found');
+      }
+    } catch (error) {
+      console.error('Error fetching location data:', error);
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-            <Bell className="w-6 h-6 mr-2" />
-            Emergency Alerts
-          </h2>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            Test Alert System
-          </button>
-        </div>
+    <div className="risk-map-container">
+      <h1>Earthquake Risk Map</h1>
+      <div className="relative">
+        <input
+          type="text"
+          value={location}
+          onChange={handleSearch} // Handle typing for suggestions
+          onKeyDown={handleKeyPress} // Handle Enter key to trigger fetch
+          placeholder="Search for a location"
+          className="search-input"
+        />
+        {loadingSuggestions && <p>Loading suggestions...</p>}
 
-        <div className="space-y-4">
-          {alerts.map((alert) => (
-            <div
-              key={alert.id}
-              className={`border rounded-lg p-4 ${getSeverityColor(alert.severity)}`}
+        {suggestions.length > 0 && (
+          <ul className="absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+            {suggestions.map((suggestion: any, index: number) => (
+              <li
+                key={suggestion.place_id || `${suggestion.formatted}-${index}`} // Ensure unique key
+                className="px-3 py-2 cursor-pointer hover:bg-gray-100"
+                onClick={() => handleSuggestionSelect(suggestion.geometry.lat, suggestion.geometry.lng)}
+              >
+                {suggestion.formatted}
+              </li>
+            ))}
+          </ul>
+        )}
+        {suggestions.length === 0 && !loadingSuggestions && location && (
+          <p>No suggestions found.</p> // Fallback message when no suggestions are found
+        )}
+      </div>
+
+      {loading && <p>Loading risk data...</p>}
+
+      {riskData && (
+        <MapContainer
+          center={coordinates ? [coordinates.lat, coordinates.lng] : [0, 0]}
+          zoom={coordinates ? 10 : 2}
+          style={{ height: '500px', width: '100%' }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+          <UpdateMapView />
+          {riskData.map((feature: any, index: number) => (
+            <Marker
+              key={index}
+              position={[feature.geometry.coordinates[1], feature.geometry.coordinates[0]]}
+              icon={L.icon({
+                iconUrl: 'https://example.com/earthquake-icon.png', // Customize the icon
+                iconSize: [25, 25],
+              })}
             >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start space-x-3">
-                  <AlertTriangle className="w-5 h-5 mt-1" />
-                  <div>
-                    <h3 className="font-semibold">{alert.title}</h3>
-                    <p className="text-sm mt-1">{alert.description}</p>
-                    <div className="mt-3">
-                      <h4 className="text-sm font-semibold mb-2">Instructions:</h4>
-                      <ul className="list-disc list-inside text-sm space-y-1">
-                        {alert.instructions.map((instruction, index) => (
-                          <li key={index}>{instruction}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                <span className="text-xs">
-                  {new Date(alert.timestamp).toLocaleTimeString()}
-                </span>
-              </div>
-            </div>
+              <Popup>
+                <strong>{feature.properties.title}</strong><br />
+                Magnitude: {feature.properties.mag}<br />
+                Location: {feature.properties.place}
+              </Popup>
+            </Marker>
           ))}
-        </div>
-      </div>
+        </MapContainer>
+      )}
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start space-x-3">
-        <Info className="w-5 h-5 text-blue-500 mt-0.5" />
-        <div>
-          <h3 className="font-semibold text-blue-900">Stay Prepared</h3>
-          <p className="text-sm text-blue-800 mt-1">
-            Enable notifications to receive real-time alerts about emergencies in your area.
-          </p>
-        </div>
-      </div>
+      {!riskData && !loading && <p>No risk data found for this location.</p>}
     </div>
   );
 };
