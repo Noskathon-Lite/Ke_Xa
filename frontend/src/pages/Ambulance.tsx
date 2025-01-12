@@ -9,7 +9,7 @@ const mockAmbulances: EmergencyService[] = [
     id: '1',
     type: 'ambulance',
     name: 'City Emergency Response Unit 1',
-    location: { lat: 34.0522, lng: -118.2437 },
+    location: { lat: 27.6859, lng: 85.3469 },
     contact: '+1-555-0123',
     available: true,
     eta: 5
@@ -18,7 +18,7 @@ const mockAmbulances: EmergencyService[] = [
     id: '2',
     type: 'ambulance',
     name: 'Medical Transport Unit 2',
-    location: { lat: 34.0622, lng: -118.2537 },
+    location: { lat: 27.6748, lng: 85.3565 },
     contact: '+1-555-0124',
     available: false,
     eta: 8
@@ -27,19 +27,19 @@ const mockAmbulances: EmergencyService[] = [
     id: '3',
     type: 'ambulance',
     name: 'Medical Transport Unit 3',
-    location: { lat: 34.0622, lng: -118.2537 },
+    location: { lat: 27.6712, lng: 85.3415 },
     contact: '+1-555-0125',
     available: true,
-    eta: 8
+    eta: 6
   },
   {
     id: '4',
     type: 'ambulance',
     name: 'Medical Transport Unit 4',
-    location: { lat: 34.0622, lng: -118.2537 },
+    location: { lat: 27.6854, lng: 85.3325 },
     contact: '+1-555-0124',
     available: true,
-    eta: 8
+    eta: 23
   }
 
 ];
@@ -99,7 +99,7 @@ const Ambulance = () => {
 
           <div className="h-[400px] rounded-lg overflow-hidden">
             <MapContainer
-              center={[34.0522, -118.2437]}
+              center={[27.6844, 85.3479]}
               zoom={13}
               className="h-full w-full"
             >
