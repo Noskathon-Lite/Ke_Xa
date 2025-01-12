@@ -28,6 +28,14 @@ const mockBroadcasts: Broadcast[] = [
     area: 'Citywide'
   },
   {
+    id: '4',
+    type: 'update',
+    title: 'HMPC Testing ',
+    message: 'New testing locations available at Central Hospital and Community Center.',
+    timestamp: new Date().toISOString(),
+    area: 'Citywide'
+  },
+  {
     id: '3',
     type: 'advisory',
     title: 'Heat Wave Alert',
