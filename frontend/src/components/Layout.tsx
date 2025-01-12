@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Bell, Map, Ambulance, Activity, Radio, MoveLeft } from 'lucide-react';
+import { Bell, Map, Ambulance, Activity, Radio } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 const Layout = () => {
@@ -30,19 +30,26 @@ const Layout = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navbar */}
-      <nav className="w-full bg-white border-b border-gray-200 px-4 py-4 shadow-md fixed top-0 left-0 right-0 z-10">
+      <nav className="w-full bg-white border-b border-gray-200  py-4 shadow-md fixed top-0 left-0 right-0 z-10">
         <div className="flex justify-between items-center max-w-screen-xl mx-auto">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Transhumanism_h%2B.svg/2048px-Transhumanism_h%2B.svg.png" alt="Logo" className="h-10 left-0" />
-          <h1 className="text-3xl font-bold text-gray-900 right-0 z-10">Health Emergency and Safety App</h1>
-          <div className="text-red-500 font-medium">{dateTime}</div>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Flag_of_Nepal.png" alt="Nepali Flag" className="h-6 w-6" />
+          {/* Left side (logo and title) */}
+          <div className="flex items-center space-x-4">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Transhumanism_h%2B.svg/2048px-Transhumanism_h%2B.svg.png" alt="Logo" className="h-10" />
+            <h1 className="text-3xl font-bold text-gray-900">Health Emergency & Safety App</h1>
+          </div>
+
+          {/* Right side (date, time, and flag) */}
+          <div className="flex items-center space-x-4">
+            <div className="text-red-500 font-medium">{dateTime}</div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Flag_of_Nepal.png" alt="Nepali Flag" className="h-6 w-6" />
+          </div>
         </div>
       </nav>
 
       <div className="flex pt-20">
         {/* Sidebar */}
-        <nav className="w-72 bg-white border-r border-gray-200 fixed left-0 top-20 bottom-0 flex flex-col items-start p-4 space-y-4 shadow-lg">
-          <div className="text-lg font-semibold mb-4"><u>Your Health App</u></div>
+        <nav className="w-73 bg-white border-r border-gray-200 fixed left-0 top-20 bottom-0 flex flex-col items-start p-4 space-y-4 shadow-lg">
+          <div className="text-lg font-semibold mb-4">Your Health App</div>
           {links.map((link) => {
             const Icon = link.icon;
             const isActive = location.pathname === link.to;
@@ -64,7 +71,7 @@ const Layout = () => {
         </nav>
 
         {/* Main Content */}
-        <div className="flex-1 ml-72 px-6 py-7">
+        <div className="flex-1 ml-72 px-6 py-8">
           <header>
             <div className="flex justify-between items-center">
               {/* Main content header (optional) */}
