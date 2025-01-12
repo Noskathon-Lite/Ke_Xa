@@ -1,0 +1,24 @@
+{
+  "name": "ke_xa",
+  "version": "1.0.0",
+  "description": "Our Health Emergency and Safety Web App is designed to meet essential needs in managing health crises and preparing for disasters. The app will provide real-time health risk information, earthquake alerts, and ambulance coordination, equipping users with the necessary tools to stay informed and take prompt action during emergencies.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Noskathon-Lite/Ke_Xa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Noskathon-Lite/Ke_Xa/issues"
+  },
+  "homepage": "https://github.com/Noskathon-Lite/Ke_Xa#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}
