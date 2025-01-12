@@ -95,8 +95,9 @@ const Layout = () => {
           <h1 className="text-2xl font-bold text-gray-900">
             Health Emergency & Safety
           </h1>
-          <div className="text-gray-600">{dateTime}</div>
+          <div className="text-red-600">{dateTime}</div>
         </div>
+        
       </header>
       
       <div className="max-w-7xl mx-auto px-4 py-6 md:py-8">
