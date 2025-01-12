@@ -203,7 +203,7 @@ const Alerts = () => {
         </MapContainer>
       )}
 
-      {!riskData && !loading && <p>No risk data found for this location.</p>}
+      {!riskData && !loading && <p>No Risk Data Found For This Location.</p>}
     </div>
   );
 };

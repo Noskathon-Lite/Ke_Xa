@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Bell, Map, Ambulance, Activity, Radio } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import '../assets/css/loader.css'; // Import the loader CSS file
 
 const Layout = () => {
   const location = useLocation();
   const [dateTime, setDateTime] = useState('');
+  const [loading, setLoading] = useState(true); // State to control loader visibility
 
   const links = [
     { to: '/', icon: Map, label: 'Health Risk Heat-Map' },
@@ -16,21 +18,39 @@ const Layout = () => {
   ];
 
   useEffect(() => {
+    // Function to update the current date and time
     const updateDateTime = () => {
       const now = new Date();
       setDateTime(now.toLocaleString('ne-NP', { timeZone: 'Asia/Kathmandu' }));
     };
 
+    // Update the date and time every second
     const intervalId = setInterval(updateDateTime, 1000);
-    updateDateTime(); // Initial call
+    updateDateTime(); // Initial call to set the time immediately
 
-    return () => clearInterval(intervalId);
+    // Set timeout to hide the loader after 3 seconds
+    const timeoutId = setTimeout(() => {
+      setLoading(false); // Set loading state to false after 3 seconds to hide loader
+    }, 3000);
+
+    // Cleanup interval and timeout
+    return () => {
+      clearInterval(intervalId);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Full-page Loader */}
+      {loading && (
+        <div className="loader-wrapper">
+          <div className="loader"></div>
+        </div>
+      )}
+
       {/* Navbar */}
-      <nav className="w-full bg-white border-b border-gray-200  py-4 shadow-md fixed top-0 left-0 right-0 z-10">
+      <nav className="w-full bg-white border-b border-gray-200 py-4 shadow-md fixed top-0 left-0 right-0 z-10">
         <div className="flex justify-between items-center max-w-screen-xl mx-auto">
           {/* Left side (logo and title) */}
           <div className="flex items-center space-x-4">
@@ -46,9 +66,9 @@ const Layout = () => {
         </div>
       </nav>
 
-      <div className="flex pt-20">
+      <div className="flex pt-15">
         {/* Sidebar */}
-        <nav className="w-73 bg-white border-r border-gray-200 fixed left-0 top-20 bottom-0 flex flex-col items-start p-4 space-y-4 shadow-lg">
+        <nav className="w-72 bg-white border-r border-gray-200 fixed left-0 top-20 bottom-0 flex flex-col items-start p-4 space-y-4 shadow-lg">
           <div className="text-lg font-semibold mb-4">Your Health App</div>
           {links.map((link) => {
             const Icon = link.icon;
@@ -71,7 +91,7 @@ const Layout = () => {
         </nav>
 
         {/* Main Content */}
-        <div className="flex-1 ml-72 px-6 py-8">
+        <div className="flex-1 ml-72 px-4 py-2">
           <header>
             <div className="flex justify-between items-center">
               {/* Main content header (optional) */}
