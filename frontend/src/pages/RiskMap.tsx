@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import debounce from "lodash.debounce"; // Use lodash to debounce the API calls
+import ClipLoader from "react-spinners/ClipLoader"; // Spinner for loading indicator
 
 // Fix default icon for Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -18,6 +19,8 @@ const RiskMap = () => {
   const [alerts, setAlerts] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Get user's current location
   useEffect(() => {
@@ -30,13 +33,14 @@ const RiskMap = () => {
       },
       (error) => {
         console.error("Error fetching location:", error);
-        alert("Could not retrieve your location. Please allow location access.");
+        setError("Could not retrieve your location. Please allow location access.");
       }
     );
   }, []);
 
   // Fetch earthquake alerts from USGS API
   const fetchRiskAlerts = async (lat: number, lon: number) => {
+    setLoading(true);
     try {
       const response = await fetch(
         `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=${lat}&longitude=${lon}&maxradiuskm=200`
@@ -49,8 +53,12 @@ const RiskMap = () => {
         location: { lat: feature.geometry.coordinates[1], lng: feature.geometry.coordinates[0] },
       }));
       setAlerts(alerts);
+      setError(null);
     } catch (error) {
       console.error("Error fetching risk alerts:", error);
+      setError("Failed to fetch earthquake alerts. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,6 +73,7 @@ const RiskMap = () => {
       setSuggestions(data);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
+      setError("Failed to fetch location suggestions. Please try again later.");
     }
   }, 500); // debounce for 500ms delay
 
@@ -87,6 +96,7 @@ const RiskMap = () => {
   // Handle search submission
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
+    setLoading(true);
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${searchQuery}&format=json&limit=1`
@@ -96,11 +106,15 @@ const RiskMap = () => {
         const { lat, lon } = data[0];
         setMapCenter({ lat: parseFloat(lat), lon: parseFloat(lon) });
         fetchRiskAlerts(parseFloat(lat), parseFloat(lon));
+        setError(null);
       } else {
-        alert("Location not found. Please try another searching another location.");
+        setError("Location not found. Please try another search.");
       }
     } catch (error) {
       console.error("Error performing search:", error);
+      setError("Failed to perform search. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -138,10 +152,17 @@ const RiskMap = () => {
             ))}
           </ul>
         )}
+        {/* Error Message */}
+        {error && <div className="text-red-500 mt-2">{error}</div>}
       </div>
 
       {/* Map Section */}
-      <div className="h-[500px]">
+      <div className="h-[500px] relative">
+        {loading && (
+          <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-75 z-10">
+            <ClipLoader color="#2563eb" size={50} />
+          </div>
+        )}
         {mapCenter && (
           <MapContainer
             center={[mapCenter.lat, mapCenter.lon]}
@@ -150,7 +171,7 @@ const RiskMap = () => {
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution="&copy; TeamKeXa?"
+              attribution="&copy; OpenStreetMap contributors"
             />
             {alerts.map((alert) => (
               <Marker
