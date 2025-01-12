@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 /* HTML: <div class="loader"></div> */
 .loader {
     display: inline-flex;
