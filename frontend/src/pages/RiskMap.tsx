@@ -12,6 +12,7 @@ const RiskMap = () => {
   const [location, setLocation] = useState<string>(''); // User's search location
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
   const [healthRiskData, setHealthRiskData] = useState<HealthRisk[]>([]); // Health risk data for the location
+  const [nearestCityData, setNearestCityData] = useState<HealthRisk | null>(null); // Nearest city data
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null); // Error message
 
@@ -28,6 +29,7 @@ const RiskMap = () => {
         const { lat, lng } = data.results[0].geometry;
         setCoordinates({ lat, lng });
         fetchHealthRiskData(lat, lng); // Fetch health risk data based on the coordinates
+        fetchNearestCityData(lat, lng); // Fetch nearest city data
       } else {
         setError('Location not found!');
       }
@@ -48,7 +50,7 @@ const RiskMap = () => {
 
       const newHealthRiskData: HealthRisk[] = [];
 
-      for (const { lat: nearbyLat, lng: nearbyLng } of coordinatesWithinRadius) {
+      for (const { lat: nearbyLat, lng: nearbyLng, cityName } of coordinatesWithinRadius) {
         // Fetch AQI Data
         const aqiResponse = await axios.get(
           `https://api.openweathermap.org/data/2.5/air_pollution?lat=${nearbyLat}&lon=${nearbyLng}&appid=${airQualityApiKey}`
@@ -61,6 +63,7 @@ const RiskMap = () => {
           type: 'air',
           level: aqiLevel,
           location: { lat: nearbyLat, lng: nearbyLng },
+          cityName: cityName,
           description: `Air quality index (PM2.5): ${aqiData.pm2_5}`,
           recommendations: getHealthRecommendations(aqiLevel),
         });
@@ -75,6 +78,7 @@ const RiskMap = () => {
             type: 'outbreak',
             level: 'high', // Example level for outbreak (can add more logic here)
             location: { lat: nearbyLat, lng: nearbyLng },
+            cityName: cityName,
             description: `Disease Outbreak: ${outbreakData.cases} cases`,
             recommendations: [
               'Follow local health guidelines',
@@ -92,14 +96,55 @@ const RiskMap = () => {
     }
   };
 
+  // Fetch the nearest city's AQI and outbreak details
+  const fetchNearestCityData = async (lat: number, lng: number) => {
+    setLoading(true);
+    try {
+      const cityResponse = await axios.get(
+        `httpsapi.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${airQualityApiKey}`
+      );
+      const city = cityResponse.data.name; // Get nearest city name
+      // Fetch AQI data for the nearest city
+      const aqiResponse = await axios.get(
+        `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lng}&appid=${airQualityApiKey}`
+      );
+      const aqiData = aqiResponse.data.list[0].components;
+      const aqiLevel = determineAQILevel(aqiData.pm2_5);
+
+      // Fetch Disease Outbreak Data
+      const outbreakResponse = await axios.get(`https://disease.sh/v3/covid-19/countries`);
+      const outbreakData = outbreakResponse.data.find((country: any) => country.countryInfo.lat === lat && country.countryInfo.long === lng);
+
+      setNearestCityData({
+        id: `${city}-aqi`,
+        type: 'air',
+        level: aqiLevel,
+        location: { lat, lng },
+        cityName: city,
+        description: `Air quality index (PM2.5): ${aqiData.pm2_5} in ${city}`,
+        recommendations: getHealthRecommendations(aqiLevel),
+      });
+    } catch (error) {
+      setError('Error fetching nearest city data.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Get nearby coordinates (simplified approach, assumes nearby locations are within the 100 km radius)
   const getNearbyCoordinates = (lat: number, lng: number) => {
     const nearbyCoordinates = [];
     const radius = 0.1; // Roughly 100 km in latitude/longitude
 
+    let counter = 0;
     for (let i = -1; i <= 1; i++) {
       for (let j = -1; j <= 1; j++) {
-        nearbyCoordinates.push({ lat: lat + i * radius, lng: lng + j * radius });
+        counter++;
+        nearbyCoordinates.push({
+          lat: lat + i * radius + Math.sin(counter) * 0.1, // Add slight zigzag movement
+          lng: lng + j * radius + Math.cos(counter) * 0.1, // Add slight zigzag movement
+          cityName: `City ${counter}`, // Use a placeholder name for this example
+        });
       }
     }
 
@@ -142,6 +187,7 @@ const RiskMap = () => {
           const { latitude, longitude } = position.coords;
           setCoordinates({ lat: latitude, lng: longitude });
           fetchHealthRiskData(latitude, longitude); // Fetch health risk data based on user's location
+          fetchNearestCityData(latitude, longitude); // Fetch nearest city data
         },
         (error) => {
           setError('Error fetching user location.');
@@ -164,7 +210,7 @@ const RiskMap = () => {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (location.trim()) {
+    if (location) {
       fetchCoordinates(location);
     }
   };
@@ -172,82 +218,101 @@ const RiskMap = () => {
   const UpdateMapView = () => {
     const map = useMap();
     if (coordinates) {
-      map.setView([coordinates.lat, coordinates.lng], 10); // Zoom level 10
+      map.flyTo([coordinates.lat, coordinates.lng], 10);
     }
     return null;
   };
 
-  // Function to get the color based on risk level for AQI and outbreaks
   const getRiskColor = (type: string, level: string) => {
     if (type === 'air') {
-      // Color for AQI
       switch (level) {
         case 'high':
           return 'red';
         case 'medium':
           return 'orange';
-        case 'low':
-          return 'green';
         default:
-          return 'blue'; // Default for AQI
+          return 'green';
       }
-    } else if (type === 'outbreak') {
-      // Color for outbreaks
-      return 'purple'; // Use purple for outbreaks
+    } else {
+      return 'purple';
     }
-    return 'blue';
   };
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow-sm p-4">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Health Risk Heat Map</h2>
+    <div className="risk-map">
+      <h1>Health Risk Map</h1>
+     
+      <form onSubmit={handleSearchSubmit} className="flex space-x-2 mb-4">
+  <input
+    type="text"
+    value={location}
+    onChange={handleSearchChange}
+    placeholder="Enter a location"
+    className="w-full sm:w-72 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+  <button
+    type="submit"
+    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    Search
+  </button>
+</form>
 
-        <form onSubmit={handleSearchSubmit} className="mb-4">
-          <input
-            type="text"
-            value={location}
-            onChange={handleSearchChange}
-            placeholder="Search for a location"
-            className="border px-4 py-2 rounded-md w-full"
-          />
-          <button type="submit" className="bg-blue-500 text-white rounded-md px-4 py-2 mt-2">
-            Search Location
-          </button>
-        </form>
+      <div className="map-container">
+        <MapContainer center={[27.7172, 85.3240]} zoom={10} scrollWheelZoom={false} style={{ height: '600px', width: '100%' }}>
+          <UpdateMapView />
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-        <div className="relative w-full h-96">
-          {loading && <div>Loading...</div>}
-          {error && <div className="text-red-500">{error}</div>}
+          {/* Nearest City Data */}
+          {nearestCityData && (
+            <CircleMarker
+              key={nearestCityData.id}
+              center={nearestCityData.location}
+              radius={12}
+              color={getRiskColor(nearestCityData.type, nearestCityData.level)}
+              fillOpacity={0.6}
+            >
+              <Popup>
+                <strong>City Name:</strong> {nearestCityData.cityName}<br />
+                <strong>Location:</strong> {nearestCityData.location.lat.toFixed(4)}, {nearestCityData.location.lng.toFixed(4)}<br />
+                <strong>Risk Type:</strong> {nearestCityData.type === 'air' ? 'AQI' : 'Outbreak'}<br />
+                <strong>Level:</strong> {nearestCityData.level}<br />
+                <strong>Description:</strong> {nearestCityData.description}<br />
+                <strong>Precautions:</strong>
+                <ul>
+                  {nearestCityData.recommendations.map((rec, index) => (
+                    <li key={index}>{rec}</li>
+                  ))}
+                </ul>
+              </Popup>
+            </CircleMarker>
+          )}
 
-          <MapContainer center={[coordinates?.lat || 0, coordinates?.lng || 0]} zoom={10} style={{ height: '100%' }}>
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <UpdateMapView />
-
-            {healthRiskData.map((risk) => (
-              <CircleMarker
-                key={risk.id}
-                center={risk.location}
-                radius={12} // Size of the bubble
-                color={getRiskColor(risk.type, risk.level)} // Color based on the risk level
-                fillOpacity={0.6}
-              >
-                <Popup>
-                  <strong>Location:</strong> {risk.location.lat.toFixed(4)}, {risk.location.lng.toFixed(4)}<br />
-                  <strong>Risk Type:</strong> {risk.type === 'air' ? 'AQI' : 'Outbreak'}<br />
-                  <strong>Level:</strong> {risk.level}<br />
-                  <strong>Description:</strong> {risk.description}<br />
-                  <strong>Precautions:</strong>
-                  <ul>
-                    {risk.recommendations.map((rec, index) => (
-                      <li key={index}>{rec}</li>
-                    ))}
-                  </ul>
-                </Popup>
-              </CircleMarker>
-            ))}
-          </MapContainer>
-        </div>
+          {/* Health Risk Data for 100 km radius */}
+          {healthRiskData.map((risk) => (
+            <CircleMarker
+              key={risk.id}
+              center={risk.location}
+              radius={12}
+              color={getRiskColor(risk.type, risk.level)}
+              fillOpacity={0.6}
+            >
+              <Popup>
+                <strong>City Name:</strong> {risk.cityName}<br />
+                <strong>Location:</strong> {risk.location.lat.toFixed(4)}, {risk.location.lng.toFixed(4)}<br />
+                <strong>Risk Type:</strong> {risk.type === 'air' ? 'AQI' : 'Outbreak'}<br />
+                <strong>Level:</strong> {risk.level}<br />
+                <strong>Description:</strong> {risk.description}<br />
+                <strong>Precautions:</strong>
+                <ul>
+                  {risk.recommendations.map((rec, index) => (
+                    <li key={index}>{rec}</li>
+                  ))}
+                </ul>
+              </Popup>
+            </CircleMarker>
+          ))}
+        </MapContainer>
       </div>
     </div>
   );
