@@ -174,8 +174,8 @@ const Alerts = () => {
       {riskData && (
         <MapContainer
           center={coordinates ? [coordinates.lat, coordinates.lng] : [0, 0]}
-          zoom={coordinates ? 10 : 2}
-          style={{ height: '700px', width: '120%' }}
+          zoom={coordinates ? 7 : 4}
+          style={{ height: '700px', width: '100%' }}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
