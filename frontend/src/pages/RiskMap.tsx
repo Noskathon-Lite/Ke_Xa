@@ -1,137 +1,161 @@
-import React from 'react';
-import { MapContainer, TileLayer, Circle, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import { HealthRisk } from '../types';
+import React, { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
-const mockRisks: HealthRisk[] = [
-  {
-    id: '1',
-    type: 'air',
-    level: 'high',
-    location: { lat: 27.6960, lng: 85.3451 },
-    description: 'High air pollution levels detected',
-    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
-  },
-  {
-    id: '3',
-    type: 'disease',
-    level: 'high',
-    location: { lat: 27.6909, lng: 85.3493 },
-    description: 'Increased HMPV Cases detected',
-    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
-  },
-  {
-    id: '4',
-    type: 'air',
-    level: 'high',
-    location: { lat: 27.6787, lng: 85.3237 },
-    description: 'High air pollution levels detected',
-    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
-  },
-  {
-    id: '5',
-    type: 'water',
-    level: 'medium',
-    location: { lat: 27.6713, lng: 85.3560 },
-    description: 'Water Level Decrease, Drink only after Boiling',
-    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
-  },
-  {
-    id: '2',
-    type: 'disease',
-    level: 'medium',
-    location: { lat: 27.7272, lng: 85.3340 },
-    description: 'Increased flu cases reported',
-    recommendations: ['Practice social distancing', 'Get vaccinated'],
-  }
-];
-
-const getRiskColor = (level: HealthRisk['level']) => {
-  switch (level) {
-    case 'high':
-      return '#ef4444';
-    case 'medium':
-      return '#f59e0b';
-    case 'low':
-      return '#10b981';
-    default:
-      return '#10b981';
-  }
-};
+// Fix default icon for Leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+});
 
 const RiskMap = () => {
+  const [userCoordinates, setUserCoordinates] = useState<{ lat: number; lon: number } | null>(null);
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lon: number } | null>(null);
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+
+  // Get user's current location
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserCoordinates({ lat: latitude, lon: longitude });
+        setMapCenter({ lat: latitude, lon: longitude });
+        fetchRiskAlerts(latitude, longitude);
+      },
+      (error) => {
+        console.error("Error fetching location:", error);
+        alert("Could not retrieve your location. Please allow location access.");
+      }
+    );
+  }, []);
+
+  // Fetch earthquake alerts from USGS API
+  const fetchRiskAlerts = async (lat: number, lon: number) => {
+    try {
+      const response = await fetch(
+        https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=${lat}&longitude=${lon}&maxradiuskm=200
+      );
+      const data = await response.json();
+      const alerts = data.features.map((feature: any) => ({
+        id: feature.id,
+        title: Earthquake: M${feature.properties.mag},
+        description: feature.properties.place,
+        location: { lat: feature.geometry.coordinates[1], lng: feature.geometry.coordinates[0] },
+      }));
+      setAlerts(alerts);
+    } catch (error) {
+      console.error("Error fetching risk alerts:", error);
+    }
+  };
+
+  // Fetch location suggestions using Nominatim API
+  const fetchSuggestions = async (query: string) => {
+    if (!query.trim()) return;
+    try {
+      const response = await fetch(
+        https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1&limit=5
+      );
+      const data = await response.json();
+      setSuggestions(data);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    }
+  };
+
+  // Handle search submission
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    try {
+      const response = await fetch(
+        https://nominatim.openstreetmap.org/search?q=${searchQuery}&format=json&limit=1
+      );
+      const data = await response.json();
+      if (data.length > 0) {
+        const { lat, lon } = data[0];
+        setMapCenter({ lat: parseFloat(lat), lon: parseFloat(lon) });
+        fetchRiskAlerts(parseFloat(lat), parseFloat(lon));
+      } else {
+        alert("Location not found. Please try another search.");
+      }
+    } catch (error) {
+      console.error("Error performing search:", error);
+    }
+  };
+
   return (
-    <div className="space-y-6 p-4 md:p-8 bg-gray-100 min-h-screen">
-      {/* Header Section */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Health Risk Heat Map</h2>
-        <p className="text-gray-600 mt-2">Monitor health risks in your area and take necessary precautions.</p>
+    <div className="space-y-6">
+      {/* Search Section */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold mb-4">Risk Map</h2>
+        <div className="flex space-x-3 mb-4">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              fetchSuggestions(e.target.value);
+            }}
+            placeholder="Search for a location"
+            className="border px-4 py-2 rounded-lg w-full"
+          />
+          <button
+            onClick={handleSearch}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Search
+          </button>
+        </div>
+        {/* Suggestions */}
+        {suggestions.length > 0 && (
+          <ul className="bg-gray-100 border rounded-lg p-3">
+            {suggestions.map((suggestion) => (
+              <li
+                key={suggestion.place_id}
+                className="cursor-pointer hover:bg-gray-200 p-2"
+                onClick={() => {
+                  setSearchQuery(suggestion.display_name);
+                  setMapCenter({ lat: parseFloat(suggestion.lat), lon: parseFloat(suggestion.lon) });
+                  fetchRiskAlerts(parseFloat(suggestion.lat), parseFloat(suggestion.lon));
+                  setSuggestions([]);
+                }}
+              >
+                {suggestion.display_name}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* Map Section */}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="h-[600px] w-full">
+      <div className="h-[500px]">
+        {mapCenter && (
           <MapContainer
-            center={[27.678156, 85.34905]} // Kathmandu
-            zoom={13}
-            className="h-full w-full"
+            center={[mapCenter.lat, mapCenter.lon]}
+            zoom={8}
+            style={{ height: "100%", width: "100%" }}
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              attribution="&copy; OpenStreetMap contributors"
             />
-            {mockRisks.map((risk) => (
-              <Circle
-                key={risk.id}
-                center={[risk.location.lat, risk.location.lng]}
-                radius={500}
-                pathOptions={{
-                  color: getRiskColor(risk.level),
-                  fillColor: getRiskColor(risk.level),
-                  fillOpacity: 0.5,
-                }}
+            {alerts.map((alert) => (
+              <Marker
+                key={alert.id}
+                position={[alert.location.lat, alert.location.lng]}
               >
                 <Popup>
-                  <div className="p-2">
-                    <h3 className="font-semibold text-lg">{risk.description}</h3>
-                    <ul className="mt-2 text-sm text-gray-700">
-                      {risk.recommendations.map((rec, index) => (
-                        <li key={index}>• {rec}</li>
-                      ))}
-                    </ul>
-                  </div>
+                  <h3>{alert.title}</h3>
+                  <p>{alert.description}</p>
                 </Popup>
-              </Circle>
+              </Marker>
             ))}
           </MapContainer>
-        </div>
-      </div>
-
-      {/* Summary Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="font-bold text-gray-900 mb-4">Air Quality</h3>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded-full bg-red-500"></div>
-            <span className="text-gray-700">Poor - Wear Masks & Take precautions</span>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="font-bold text-gray-900 mb-4">Disease Outbreaks</h3>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded-full bg-yellow-500"></div>
-            <span className="text-gray-700">Moderate risk - Social Distancing - Wear Masks - Stay alert</span>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="font-bold text-gray-900 mb-4">Water Quality</h3>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded-full bg-green-500"></div>
-            <span className="text-gray-700">Good - Safe to use</span>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
