@@ -181,7 +181,7 @@ const RiskMap = () => {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-4">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Health Risk Heat Map</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Health Risk Heat-Map</h2>
 
         <form onSubmit={handleSearchSubmit} className="mb-4">
           <input
@@ -196,7 +196,7 @@ const RiskMap = () => {
           </button>
         </form>
 
-        {loading && <p>Loading health data...</p>}
+        {loading && <p>Loading Real-Time Health Data...</p>}
         {error && <p className="text-red-500">{error}</p>}
 
         <div className="h-[600px] rounded-lg overflow-hidden">
