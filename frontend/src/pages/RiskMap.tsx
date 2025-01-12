@@ -108,13 +108,13 @@ const RiskMap = () => {
     <div className="space-y-6">
       {/* Search Section */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Risk Map</h2>
+        <h2 className="text-xl font-semibold mb-4">Risk Heat-Map Visualization</h2>
         <div className="flex space-x-3 mb-4">
           <input
             type="text"
             value={searchQuery}
             onChange={handleSearchInputChange}
-            placeholder="Search for a location"
+            placeholder="Search for the desired location's heatmap"
             className="border px-4 py-2 rounded-lg w-full"
           />
           <button
