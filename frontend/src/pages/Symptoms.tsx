@@ -54,7 +54,7 @@ const mockSymptoms: Symptom[] = [
     severity: 'low',
     recommendations: [
       'Rest in a quiet, dark room',
-      'Turn on Dark Mode in your phone',
+      'Turn on Dark Mode & Eye-Comfort in your phone',
       'Stay hydrated',
       'Try over-the-counter pain relievers',
       'Apply cold or warm compress',
