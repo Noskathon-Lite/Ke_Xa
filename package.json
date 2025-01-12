@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/Noskathon-Lite/Ke_Xa/issues"
   },
-  "homepage": "https://github.com/Noskathon-Lite/Ke_Xa#readme"
+  "homepage": "https://github.com/Noskathon-Lite/Ke_Xa#readme",
+  "devDependencies": {
+    "vite": "^6.0.7"
+  }
 }
