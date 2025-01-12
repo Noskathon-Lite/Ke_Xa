@@ -1,4 +1,4 @@
-Our Health Emergency and Safety Web App will be designed to meet essential needs in managing health crises and preparing for disasters. The app will provide real-time health risk information, earthquake alerts, and ambulance coordination, equipping users with the necessary tools to stay informed and take prompt action during emergencies.
+###Our Health Emergency and Safety Web App will be designed to meet essential needs in managing health crises and preparing for disasters. The app will provide real-time health risk information, earthquake alerts, and ambulance coordination, equipping users with the necessary tools to stay informed and take prompt action during emergencies.
 
 Our App will feature the following key components:
 1. Health Risk Heat-map: This will display real-time health risks, such as disease outbreaks and AQI levels, using color-coded indicators to guide user decisions.
