@@ -26,6 +26,14 @@ const mockRisks: HealthRisk[] = [
     level: 'high',
     location: { lat: 27.6787, lng: 85.3237 },
     description: 'High air pollution levels detected',
+    recommendations: ['Avoid outdoor activities', 'Dont drik water without filteration'],
+  },
+  {
+    id: '16',
+    type: 'water',
+    level: 'high',
+    location: { lat: 27.6787, lng: 85.3237 },
+    description: 'High water pollution levels detected',
     recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
   },
   {
