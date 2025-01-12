@@ -55,6 +55,37 @@ const Layout = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  useEffect(() => {
+    const updateDateTime = () => {
+      const now = new Date();
+  
+      // Format the date as "Jan 12, 2025"
+      const formattedDate = now.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        timeZone: 'Asia/Kathmandu',
+      });
+  
+      // Format the time
+      const formattedTime = now.toLocaleString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZone: 'Asia/Kathmandu',
+      });
+  
+      setDateTime(`${formattedDate} _ ${formattedTime}`);
+    };
+  
+    const intervalId = setInterval(updateDateTime, 1000);
+    updateDateTime(); // Initial call
+  
+    return () => clearInterval(intervalId);
+  }, []);
+  
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-4 py-4">
