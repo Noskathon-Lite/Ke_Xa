@@ -259,7 +259,7 @@ const RiskMap = () => {
 </form>
 
       <div className="map-container">
-        <MapContainer center={[27.7172, 85.3240]} zoom={10} scrollWheelZoom={false} style={{ height: '600px', width: '100%' }}>
+        <MapContainer center={[27.7172, 85.3240]} zoom={10} scrollWheelZoom={true} style={{ height: '600px', width: '100%' }}>
           <UpdateMapView />
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
