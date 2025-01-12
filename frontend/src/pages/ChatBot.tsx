@@ -56,32 +56,33 @@ const Chatbot = () => {
   return (
     <>
       <button
-        className="fixed bottom-4 right-4 bg-blue-600 text-white rounded-full p-4 shadow-lg hover:bg-blue-700 focus:outline-none"
+        className="fixed bottom-6 right-6 bg-blue-600 text-white rounded-full p-5 shadow-lg hover:bg-blue-700 focus:outline-none transition duration-300"
         onClick={() => setIsChatVisible((prev) => !prev)}
       >
-        <MessageCircle className="w-6 h-6" />
+        <MessageCircle className="w-8 h-8" />
       </button>
 
       {isChatVisible && (
-        <div className="fixed bottom-16 right-4 w-80 h-96 bg-white shadow-lg border rounded-lg flex flex-col">
-          <div className="p-4 bg-blue-600 text-white font-semibold flex justify-between items-center">
+        <div className="fixed bottom-24 right-6 w-96 h-97 bg-gradient-to-tl from-blue-400 to-blue-600 shadow-xl border rounded-2xl flex flex-col">
+          <div className="p-4 bg-blue-800 text-white font-semibold flex justify-between items-center rounded-t-2xl shadow-lg">
             <span>AI Health Assistant</span>
             <button
-              className="text-white"
+              className="text-white text-xl"
               onClick={() => setIsChatVisible(false)}
             >
-              X
+              &times;
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {/* This is the scrollable area */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {messages.map((msg, index) => (
               <div
                 key={index}
                 className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[70%] p-3 rounded-lg text-sm ${msg.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+                  className={`max-w-[75%] p-4 rounded-lg text-sm ${msg.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
                 >
                   {msg.text}
                 </div>
@@ -89,25 +90,23 @@ const Chatbot = () => {
             ))}
 
             {typing && (
-              <div className="flex justify-start">
-                <div className="flex items-center space-x-1">
-                  <div className="w-2.5 h-2.5 bg-gray-500 rounded-full animate-bounce"></div>
-                  <div className="w-2.5 h-2.5 bg-gray-500 rounded-full animate-bounce200"></div>
-                  <div className="w-2.5 h-2.5 bg-gray-500 rounded-full animate-bounce400"></div>
-                </div>
-                <span className="text-gray-500">Typing...</span>
+              <div className="flex justify-start space-x-2 items-center">
+                <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce"></div>
+                <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce200"></div>
+                <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce400"></div>
+                <span className="text-white">Typing...</span>
               </div>
             )}
 
             {loading && (
-              <div className="text-center text-gray-500">Generating response...</div>
+              <div className="text-center text-white">Generating response...</div>
             )}
           </div>
 
-          <div className="p-4 border-t">
+          <div className="p-6 border-t bg-gray-100 rounded-b-2xl">
             <input
               type="text"
-              className="w-full p-2 border rounded-lg"
+              className="w-full p-4 border rounded-xl shadow-md"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => {
