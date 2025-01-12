@@ -39,7 +39,7 @@ const mockAmbulances: EmergencyService[] = [
     location: { lat: 27.6854, lng: 85.3325 },
     contact: '+1-879-0124',
     available: true,
-    eta: 2
+    eta: 89
   }
 
 ];
