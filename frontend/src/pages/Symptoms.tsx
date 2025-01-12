@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Activity, ChevronRight, AlertCircle, MessageCircle } from 'lucide-react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { Activity, ChevronRight } from 'lucide-react';
+import Chatbot from './ChatBot';
 
 interface Symptom {
   id: string;
@@ -16,30 +16,14 @@ const mockSymptoms: Symptom[] = [
     severity: 'medium',
     recommendations: [
       'Rest and stay hydrated',
-      'Take medication as prescribed',
-      'Monitor temperature',
       'Take over-the-counter fever reducers',
-      'Monitor Temperature Regularly With The Help of Thermo-meter',
+      'Monitor temperature regularly',
       'Seek medical attention if fever persists over 3 days',
     ],
   },
   {
     id: '2',
     name: 'Difficulty Breathing',
-    severity: 'high',
-    recommendations: [
-      'Seek immediate medical attention',
-      'Try to remain calm',
-      'Sit up straight and lean forward',
-      'Use a fan to blow air across your face',
-      'Avoid lying down',
-      'Sit upright to help breathing',
-      'Use prescribed inhaler if available',
-    ],
-  },
-  {
-    id: '4',
-    name: 'Chest Pain ',
     severity: 'high',
     recommendations: [
       'Seek immediate medical attention',
@@ -54,7 +38,6 @@ const mockSymptoms: Symptom[] = [
     severity: 'low',
     recommendations: [
       'Rest in a quiet, dark room',
-      'Turn on Dark Mode & Eye-Comfort in your phone',
       'Stay hydrated',
       'Try over-the-counter pain relievers',
       'Apply cold or warm compress',
@@ -64,58 +47,6 @@ const mockSymptoms: Symptom[] = [
 
 const App = () => {
   const [selectedSymptom, setSelectedSymptom] = useState<Symptom | null>(null);
-  const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [isChatVisible, setIsChatVisible] = useState(false);
-
-  useEffect(() => {
-    if (selectedSymptom) {
-      const autoMessage = {
-        sender: 'bot',
-        text: `You selected: ${selectedSymptom.name}. Here are some Recommendations: ${selectedSymptom.recommendations.join(
-          ', '
-        )}.`,
-      };
-      setMessages((prev) => [...prev, autoMessage]);
-    }
-  }, [selectedSymptom]);
-
-  const sendMessage = async () => {
-    if (!input.trim()) return;
-
-    const userMessage = { sender: 'user', text: input };
-    setMessages((prev) => [...prev, userMessage]);
-    setInput('');
-    setLoading(true);
-
-    try {
-      const response = await axios.post(
-        'https://your-ai-ml-api-endpoint.com/predict',
-        { input },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `3f2e5ac1efa4410ea65225a65ba91ab9`,
-          },
-        }
-      );
-
-      const botMessage = {
-        sender: 'bot',
-        text: response.data.output || 'No response from AI.',
-      };
-      setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
-      console.error('Error fetching response:', error);
-      setMessages((prev) => [
-        ...prev,
-        { sender: 'bot', text: 'An error occurred. Please try again later.' },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getSeverityColor = (severity: Symptom['severity']) => {
     switch (severity) {
@@ -138,7 +69,7 @@ const App = () => {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900 flex items-center">
               <Activity className="w-6 h-6 mr-2" />
-              Interactive Symptoms Checker
+              Symptom Checker
             </h2>
           </div>
 
@@ -195,63 +126,8 @@ const App = () => {
         </div>
       </div>
 
-      {/* ChatBot Button and Section */}
-      <button
-        className="fixed bottom-4 right-4 bg-blue-600 text-white rounded-full p-4 shadow-lg hover:bg-blue-700 focus:outline-none"
-        onClick={() => setIsChatVisible((prev) => !prev)}
-      >
-        <MessageCircle className="w-6 h-6" />
-      </button>
-
-      {isChatVisible && (
-        <div className="fixed bottom-16 right-4 w-80 h-96 bg-white shadow-lg border rounded-lg flex flex-col">
-          <div className="p-4 bg-blue-600 text-white font-semibold flex justify-between items-center">
-            <span>AI Health Assistant</span>
-            <button
-              className="text-white"
-              onClick={() => setIsChatVisible(false)}
-            >
-              ×
-            </button>
-          </div>
-
-          <div className="flex-1 p-4 overflow-y-auto space-y-4">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`mb-2 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}
-              >
-                <div
-                  className={`inline-block p-2 rounded-lg ${
-                    msg.sender === 'user'
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}
-                >
-                  {msg.text}
-                </div>
-              </div>
-            ))}
-            {loading && <div className="text-gray-500 text-center">Typing...</div>}
-          </div>
-
-          <div className="p-4 border-t flex space-x-2">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about symptoms..."
-              className="w-full p-2 border rounded-lg"
-            />
-            <button
-              onClick={sendMessage}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-            >
-              ASK
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Chatbot Section */}
+      <Chatbot />
     </div>
   );
 };
