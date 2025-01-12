@@ -91,11 +91,12 @@ const Layout = () => {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-4 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <img src="/Users/harshchaudhary/Documents/Ke_Xa/frontend/src/assets/css/images/logo.png" alt="Logo" className="h-8" />
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Transhumanism_h%2B.svg/2048px-Transhumanism_h%2B.svg.png" alt="Logo" className="h-8" />
           <h1 className="text-2xl font-bold text-gray-900">
             Health Emergency & Safety
           </h1>
           <div className="text-red-600">{dateTime}</div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Flag_of_Nepal.png" alt="Nepali Flag" className="h-6 w-6"/>
         </div>
         
       </header>
