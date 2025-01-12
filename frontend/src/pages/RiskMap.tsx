@@ -2,10 +2,71 @@ import React, { useState } from 'react';
 import { MessageCircle } from 'lucide-react';
 import RiskMap from './RiskMap'; // Assuming RiskMap is in the same folder
 
+<<<<<<< HEAD
 const App = () => {
   const [isChatVisible, setIsChatVisible] = useState(false);
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
   const [input, setInput] = useState('');
+=======
+const mockRisks: HealthRisk[] = [
+  {
+    id: '1',
+    type: 'air',
+    level: 'high',
+    location: { lat: 27.6960, lng: 85.3451 },
+    description: 'High air pollution levels detected',
+    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
+  },
+  {
+    id: '17',
+    type: 'disease',
+    level: 'high',
+    location: { lat: 27.6960, lng: 85.3451 },
+    description: 'HMPC Virus Infected area',
+    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside & Sanitize your hand properly'],
+  },
+  {
+    id: '3',
+    type: 'disease',
+    level: 'high',
+    location: { lat: 27.6909, lng: 85.3493 },
+    description: 'Increased HMPV Cases detected',
+    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
+  },
+  {
+    id: '4',
+    type: 'air',
+    level: 'high',
+    location: { lat: 27.6787, lng: 85.3237 },
+    description: 'High air pollution levels detected',
+    recommendations: ['Avoid outdoor activities', 'Dont drik water without filteration'],
+  },
+  {
+    id: '16',
+    type: 'water',
+    level: 'high',
+    location: { lat: 27.6787, lng: 85.3237 },
+    description: 'High water pollution levels detected',
+    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
+  },
+  {
+    id: '5',
+    type: 'water',
+    level: 'medium',
+    location: { lat: 27.6713, lng: 85.3560 },
+    description: 'Water Level Decrease, Drink only after Boiling',
+    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
+  },
+  {
+    id: '2',
+    type: 'disease',
+    level: 'medium',
+    location: { lat: 27.7272, lng: 85.3340 },
+    description: 'Increased flu cases reported',
+    recommendations: ['Practice social distancing', 'Get vaccinated'],
+  }
+];
+>>>>>>> c310a7da4c485ff39d03de03ed42929cc168ea99
 
   const mockRisks = [
     { id: '1', type: 'air', level: 'high', location: { lat: 27.6960, lng: 85.3451 }, description: 'High air pollution levels detected', recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'] },
