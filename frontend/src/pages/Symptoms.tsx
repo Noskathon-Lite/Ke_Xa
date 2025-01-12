@@ -90,7 +90,7 @@ const App = () => {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer YOUR_API_KEY`,
+            Authorization: `3f2e5ac1efa4410ea65225a65ba91ab9`,
           },
         }
       );
