@@ -22,3 +22,30 @@ const ambulances = [
 app.get("/api/ambulances", (req, res) => {
     res.json(ambulances);
 });
+const cors = require("cors");
+
+// Use CORS middleware
+app.use(cors());
+
+const http = require("http");
+const { Server } = require("socket.io");
+
+const server = http.createServer(app);
+const io = new Server(server);
+
+io.on("connection", (socket) => {
+    console.log("A user connected");
+
+    // Emit a real-time earthquake alert
+    setInterval(() => {
+        socket.emit("earthquakeAlert", { message: "Earthquake Alert! Stay Safe!" });
+    }, 10000);
+
+    socket.on("disconnect", () => {
+        console.log("A user disconnected");
+    });
+});
+
+server.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
