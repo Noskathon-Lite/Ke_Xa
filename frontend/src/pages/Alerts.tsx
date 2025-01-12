@@ -171,7 +171,7 @@ const Alerts = () => {
         )}
       </div>
 
-      {loading && <p>Loading risk data...</p>}
+      {loading && <p>Loading Risk Data...</p>}
 
       {riskData && (
         <MapContainer
