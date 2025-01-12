@@ -59,24 +59,25 @@ const Layout = () => {
     const updateDateTime = () => {
       const now = new Date();
   
-      // Format the date as "Jan 12, 2025"
+      // Format the day, date, and year as "Sunday, Jan 12, 2025"
       const formattedDate = now.toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
+        weekday: 'long', // Full name of the day (e.g., "Sunday")
+        month: 'short',  // Abbreviated month name (e.g., "Jan")
+        day: 'numeric',  // Day without leading zeros (e.g., "12")
+        year: 'numeric', // Full year (e.g., "2025")
         timeZone: 'Asia/Kathmandu',
       });
   
-      // Format the time
+      // Format the time as "08:45:30 PM"
       const formattedTime = now.toLocaleString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
-        hour12: false,
+        hour12: true,
         timeZone: 'Asia/Kathmandu',
       });
   
-      setDateTime(`${formattedDate} _ ${formattedTime}`);
+      setDateTime(`${formattedDate} - ${formattedTime}`);
     };
   
     const intervalId = setInterval(updateDateTime, 1000);
