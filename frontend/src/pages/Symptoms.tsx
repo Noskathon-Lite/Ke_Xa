@@ -200,7 +200,7 @@ const App = () => {
       {isChatVisible && (
         <div className="fixed bottom-16 right-4 w-80 h-96 bg-white shadow-lg border rounded-lg flex flex-col">
           <div className="p-4 bg-blue-600 text-white font-semibold flex justify-between items-center">
-            <span>ChatBot</span>
+            <span>AI Health Assistant</span>
             <button
               className="text-white"
               onClick={() => setIsChatVisible(false)}
@@ -241,7 +241,7 @@ const App = () => {
               onClick={sendMessage}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
             >
-              Send
+              ASK
             </button>
           </div>
         </div>
