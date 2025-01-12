@@ -26,7 +26,7 @@ const mockAmbulances: EmergencyService[] = [
   {
     id: '3',
     type: 'ambulance',
-    name: 'Medical Transport Unit 3',
+    name: 'Medical Transport Unit 23',
     location: { lat: 27.6712, lng: 85.3415 },
     contact: '+1-555-06764',
     available: true,
