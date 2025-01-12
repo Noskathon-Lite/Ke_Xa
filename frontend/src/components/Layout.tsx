@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Bell, Map, Ambulance, Activity, Radio } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -41,6 +41,20 @@ const Navigation = () => {
 };
 
 const Layout = () => {
+  const [dateTime, setDateTime] = useState('');
+
+  useEffect(() => {
+    const updateDateTime = () => {
+      const now = new Date();
+      setDateTime(now.toLocaleString('ne-NP', { timeZone: 'Asia/Kathmandu' }));
+    };
+
+    const intervalId = setInterval(updateDateTime, 1000);
+    updateDateTime(); // Initial call
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-4 py-4">
@@ -49,6 +63,7 @@ const Layout = () => {
           <h1 className="text-2xl font-bold text-gray-900">
             Health Emergency & Safety
           </h1>
+          <div className="text-gray-600">{dateTime}</div>
         </div>
       </header>
       
