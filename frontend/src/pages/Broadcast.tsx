@@ -23,11 +23,25 @@ const getBroadcastStyle = (type: Broadcast['type']) => {
   }
 };
 
-const Broadcast = () => {
+const mapReferenceTypeToBroadcastType = (referenceType: string): Broadcast['type'] => {
+  switch (referenceType) {
+    case 'fire':
+      return 'emergency';
+    case 'weather':
+      return 'update';
+    case 'advisory':
+      return 'advisory';
+    default:
+      return 'advisory';
+  }
+};
+
+const BroadcastComponent = () => {
   const [broadcasts, setBroadcasts] = useState<Broadcast[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [subscribed, setSubscribed] = useState(false);
+  const [subscriptionDate, setSubscriptionDate] = useState<string | null>(null);
 
   // Fetch broadcasts from API
   const fetchBroadcasts = async () => {
@@ -35,18 +49,61 @@ const Broadcast = () => {
       setLoading(true);
       setError(null);
 
-      // Replace with your API endpoint
       const response = await fetch('https://bipadportal.gov.np/api/v1/alert/');
       if (!response.ok) {
-        throw new Error('Failed to fetch broadcasts');
+        throw new Error(`Failed to fetch broadcasts: ${response.statusText}`);
       }
 
       const data = await response.json();
-      setBroadcasts(data);
+      const broadcasts = data.results.map((item: any) => ({
+        id: item.id.toString(),
+        type: mapReferenceTypeToBroadcastType(item.referenceType),
+        title: item.title,
+        message: item.description || 'No description provided.',
+        timestamp: item.createdOn,
+        area: item.region || 'Unknown Area',
+      }));
+
+      // Sort broadcasts by timestamp in descending order
+      broadcasts.sort((a, b) => {
+        const dateA = new Date(a.timestamp);
+        const dateB = new Date(b.timestamp);
+        return dateB.getTime() - dateA.getTime(); // Sorting in descending order
+      });
+
+      // Limit to only the latest 20 broadcasts
+      setBroadcasts(broadcasts.slice(0, 20));
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Effect to load stored subscription state and date
+  useEffect(() => {
+    const savedSubscription = localStorage.getItem('subscribed');
+    const savedDate = localStorage.getItem('subscriptionDate');
+    if (savedSubscription === 'true') {
+      setSubscribed(true);
+      setSubscriptionDate(savedDate);
+    }
+  }, []);
+
+  // Handle subscription toggle
+  const handleSubscribeToggle = () => {
+    const currentDate = new Date().toLocaleDateString();
+    const newSubscribedState = !subscribed;
+    
+    setSubscribed(newSubscribedState);
+    setSubscriptionDate(newSubscribedState ? currentDate : null);
+
+    // Store both the subscription state and date in localStorage
+    localStorage.setItem('subscribed', newSubscribedState ? 'true' : 'false');
+    if (newSubscribedState) {
+      localStorage.setItem('subscriptionDate', currentDate);
+    } else {
+      localStorage.removeItem('subscriptionDate');
     }
   };
 
@@ -63,7 +120,7 @@ const Broadcast = () => {
             Emergency Broadcasting System
           </h2>
           <button
-            onClick={() => setSubscribed(!subscribed)}
+            onClick={handleSubscribeToggle}
             className={`px-4 py-2 rounded-lg transition-colors ${
               subscribed ? 'bg-green-600 text-white' : 'bg-blue-600 text-white'
             }`}
@@ -73,13 +130,20 @@ const Broadcast = () => {
           </button>
         </div>
 
+        {/* Display Subscription Date if Subscribed */}
+        {subscribed && subscriptionDate && (
+          <p className="text-sm text-gray-600 mt-2">
+            You subscribed on: {subscriptionDate}
+          </p>
+        )}
+
         {/* Display Loading State */}
         {loading && <p className="text-gray-700">Loading Emergency Broadcasts...</p>}
 
         {/* Display Error State */}
         {error && (
           <p className="text-red-600">
-            Error: {error}. Please Try Refreshing The Page Hai Ta.
+            Error: {error}. Please try refreshing the page.
           </p>
         )}
 
@@ -87,28 +151,37 @@ const Broadcast = () => {
         <div className="space-y-4">
           {!loading &&
             !error &&
-            broadcasts.map((broadcast) => (
-              <div
-                key={broadcast.id}
-                className={`border rounded-lg p-4 ${getBroadcastStyle(broadcast.type)}`}
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <div className="flex items-center">
-                      <AlertTriangle className="w-5 h-5 mr-2" />
-                      <h3 className="font-semibold">{broadcast.title}</h3>
+            (broadcasts.length > 0 ? (
+              broadcasts.map((broadcast) => (
+                <div
+                  key={broadcast.id}
+                  className={`border rounded-lg p-4 ${getBroadcastStyle(broadcast.type)}`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="flex items-center">
+                        <AlertTriangle className="w-5 h-5 mr-2" />
+                        <h3 className="font-semibold">{broadcast.title}</h3>
+                      </div>
+                      <p className="mt-2 text-sm">{broadcast.message}</p>
+                      <div className="mt-3 text-sm">
+                        <span className="font-medium">Area: </span>
+                        {broadcast.area}
+                      </div>
+                      {/* Display the Broadcast Date */}
+                      <div className="mt-2 text-xs text-gray-500">
+                        <span className="font-medium">Date: </span>
+                        {new Date(broadcast.timestamp).toLocaleDateString()} {/* Formatting the date */}
+                      </div>
                     </div>
-                    <p className="mt-2 text-sm">{broadcast.message}</p>
-                    <div className="mt-3 text-sm">
-                      <span className="font-medium">Area: </span>
-                      {broadcast.area}
-                    </div>
+                    <span className="text-xs">
+                      {new Date(broadcast.timestamp).toLocaleTimeString()}
+                    </span>
                   </div>
-                  <span className="text-xs">
-                    {new Date(broadcast.timestamp).toLocaleTimeString()}
-                  </span>
                 </div>
-              </div>
+              ))
+            ) : (
+              <p className="text-gray-700">No broadcasts available at the moment.</p>
             ))}
         </div>
       </div>
@@ -119,8 +192,8 @@ const Broadcast = () => {
           <div>
             <h3 className="font-semibold text-blue-900">Stay Informed</h3>
             <p className="text-sm text-blue-800 mt-1">
-              Subscribe to Receive Real-Time Alerts About Emergencies In Your Area. We'll Only Send
-              You Important Notifications.
+              Subscribe to receive real-time alerts about emergencies in your area. We'll only send
+              you important notifications.
             </p>
           </div>
         </div>
@@ -130,8 +203,8 @@ const Broadcast = () => {
           <div>
             <h3 className="font-semibold text-green-900">Notification Settings</h3>
             <p className="text-sm text-green-800 mt-1">
-              Customize Your Alert Preferences And Choose Which Types Of Notifications You Want To
-              Receive.
+              Customize your alert preferences and choose which types of notifications you want to
+              receive.
             </p>
           </div>
         </div>
@@ -140,4 +213,4 @@ const Broadcast = () => {
   );
 };
 
-export default Broadcast;
+export default BroadcastComponent;
