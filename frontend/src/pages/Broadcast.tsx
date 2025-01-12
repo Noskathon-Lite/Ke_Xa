@@ -36,7 +36,7 @@ const Broadcast = () => {
       setError(null);
 
       // Replace with your API endpoint
-      const response = await fetch('https://mockapi.io/projects/123456789/broadcasts');
+      const response = await fetch('https://bipadportal.gov.np/api/v1/alert/');
       if (!response.ok) {
         throw new Error('Failed to fetch broadcasts');
       }
