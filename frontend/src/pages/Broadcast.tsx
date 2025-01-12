@@ -74,12 +74,12 @@ const Broadcast = () => {
         </div>
 
         {/* Display Loading State */}
-        {loading && <p className="text-gray-700">Loading broadcasts...</p>}
+        {loading && <p className="text-gray-700">Loading Emergency Broadcasts...</p>}
 
         {/* Display Error State */}
         {error && (
           <p className="text-red-600">
-            Error: {error}. Please try refreshing the page.
+            Error: {error}. Please Try Refreshing The Page.
           </p>
         )}
 
@@ -119,8 +119,8 @@ const Broadcast = () => {
           <div>
             <h3 className="font-semibold text-blue-900">Stay Informed</h3>
             <p className="text-sm text-blue-800 mt-1">
-              Subscribe to receive real-time alerts about emergencies in your area. We'll only send
-              you important notifications.
+              Subscribe to Receive Real-Time Alerts About Emergencies In Your Area. We'll Only Send
+              You Important Notifications.
             </p>
           </div>
         </div>
@@ -130,8 +130,8 @@ const Broadcast = () => {
           <div>
             <h3 className="font-semibold text-green-900">Notification Settings</h3>
             <p className="text-sm text-green-800 mt-1">
-              Customize your alert preferences and choose which types of notifications you want to
-              receive.
+              Customize Your Alert Preferences And Choose Which Types Of Notifications You Want To
+              Receive.
             </p>
           </div>
         </div>
