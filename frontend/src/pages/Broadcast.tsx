@@ -152,34 +152,38 @@ const BroadcastComponent = () => {
           {!loading &&
             !error &&
             (broadcasts.length > 0 ? (
-              broadcasts.map((broadcast) => (
-                <div
-                  key={broadcast.id}
-                  className={`border rounded-lg p-4 ${getBroadcastStyle(broadcast.type)}`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center">
-                        <AlertTriangle className="w-5 h-5 mr-2" />
-                        <h3 className="font-semibold">{broadcast.title}</h3>
+              <div
+                className="overflow-y-auto max-h-80" // Added scrollable container
+              >
+                {broadcasts.map((broadcast) => (
+                  <div
+                    key={broadcast.id}
+                    className={`border rounded-lg p-4 ${getBroadcastStyle(broadcast.type)}`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="flex items-center">
+                          <AlertTriangle className="w-5 h-5 mr-2" />
+                          <h3 className="font-semibold">{broadcast.title}</h3>
+                        </div>
+                        <p className="mt-2 text-sm">{broadcast.message}</p>
+                        <div className="mt-3 text-sm">
+                          <span className="font-medium">Area: </span>
+                          {broadcast.area}
+                        </div>
+                        {/* Display the Broadcast Date */}
+                        <div className="mt-2 text-xs text-gray-500">
+                          <span className="font-medium">Date: </span>
+                          {new Date(broadcast.timestamp).toLocaleDateString()} {/* Formatting the date */}
+                        </div>
                       </div>
-                      <p className="mt-2 text-sm">{broadcast.message}</p>
-                      <div className="mt-3 text-sm">
-                        <span className="font-medium">Area: </span>
-                        {broadcast.area}
-                      </div>
-                      {/* Display the Broadcast Date */}
-                      <div className="mt-2 text-xs text-gray-500">
-                        <span className="font-medium">Date: </span>
-                        {new Date(broadcast.timestamp).toLocaleDateString()} {/* Formatting the date */}
-                      </div>
+                      <span className="text-xs">
+                        {new Date(broadcast.timestamp).toLocaleTimeString()}
+                      </span>
                     </div>
-                    <span className="text-xs">
-                      {new Date(broadcast.timestamp).toLocaleTimeString()}
-                    </span>
                   </div>
-                </div>
-              ))
+                ))}
+              </div>
             ) : (
               <p className="text-gray-700">No broadcasts available at the moment.</p>
             ))}
