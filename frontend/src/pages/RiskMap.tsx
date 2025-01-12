@@ -190,12 +190,12 @@ const RiskMap = () => {
           fetchNearestCityData(latitude, longitude); // Fetch nearest city data
         },
         (error) => {
-          setError('Error fetching user location.');
+          setError('Error Fetching Users Location.');
           setLoading(false);
         }
       );
     } else {
-      setError('Geolocation is not supported by this browser.');
+      setError('Geo-Location is not supported by this Browser, Try Using different Browser');
       setLoading(false);
     }
   };
