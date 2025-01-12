@@ -13,13 +13,37 @@ const mockRisks: HealthRisk[] = [
     recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
   },
   {
+    id: '3',
+    type: 'disease',
+    level: 'high',
+    location: { lat: 27.7172, lng: 85.3240 },
+    description: 'Increased HMPV Cases detected',
+    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
+  },
+  {
+    id: '4',
+    type: 'air',
+    level: 'high',
+    location: { lat: 27.7172, lng: 85.3240 },
+    description: 'High air pollution levels detected',
+    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
+  },
+  {
+    id: '5',
+    type: 'water',
+    level: 'medium',
+    location: { lat: 27.7172, lng: 85.3240 },
+    description: 'Water Level Decrease, Drink only after Boiling',
+    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
+  },
+  {
     id: '2',
     type: 'disease',
     level: 'medium',
     location: { lat: 27.7272, lng: 85.3340 },
     description: 'Increased flu cases reported',
     recommendations: ['Practice social distancing', 'Get vaccinated'],
-  },
+  }
 ];
 
 const getRiskColor = (level: HealthRisk['level']) => {
@@ -48,7 +72,7 @@ const RiskMap = () => {
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="h-[600px] w-full">
           <MapContainer
-            center={[27.7172, 85.3240]} // Kathmandu
+            center={[27.678156, 85.34905]} // Kathmandu
             zoom={13}
             className="h-full w-full"
           >
