@@ -1,191 +1,120 @@
-import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-import debounce from "lodash.debounce"; // Use lodash to debounce the API calls
-import ClipLoader from "react-spinners/ClipLoader"; // Spinner for loading indicator
+import React from 'react';
+import { MapContainer, TileLayer, Circle, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import { HealthRisk } from '../types';
 
-// Fix default icon for Leaflet
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-});
+const healthRiskData: HealthRisk[] = [
+  {
+    id: '1',
+    type: 'air',
+    level: 'high',
+    location: { lat: 27.7008, lng: 85.3000 },
+    description: 'High air pollution levels detected',
+    recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
+  },
+  {
+    id: '2',
+    type: 'disease',
+    level: 'medium',
+    location: { lat: 27.7108, lng: 85.3100 },
+    description: 'Increased flu cases reported',
+    recommendations: ['Practice social distancing', 'Get vaccinated'],
+  },
+  {
+    id: '3',
+    type: 'water',
+    level: 'low',
+    location: { lat: 27.7150, lng: 85.3240 },
+    description: 'Water quality is safe for use',
+    recommendations: ['No precautions necessary'],
+  },
+  {
+    id: '4',
+    type: 'air',
+    level: 'medium',
+    location: { lat: 27.6712, lng: 85.2890 },
+    description: 'Moderate air pollution levels detected',
+    recommendations: ['Reduce outdoor exposure', 'Wear a mask if sensitive to pollutants'],
+  },
+  {
+    id: '5',
+    type: 'disease',
+    level: 'high',
+    location: { lat: 27.6882, lng: 85.3280 },
+    description: 'High number of dengue cases reported',
+    recommendations: ['Use mosquito repellent', 'Avoid stagnant water'],
+  },
+  {
+    id: '6',
+    type: 'water',
+    level: 'medium',
+    location: { lat: 27.7030, lng: 85.2880 },
+    description: 'Contamination detected in local water supply',
+    recommendations: ['Boil water before drinking', 'Use water purifiers'],
+  },
+  {
+    id: '7',
+    type: 'air',
+    level: 'high',
+    location: { lat: 27.6872, lng: 85.3245 },
+    description: 'High air pollution levels detected due to traffic',
+    recommendations: ['Avoid outdoor activities', 'Wear masks in the area'],
+  },
+];
+
+const getRiskColor = (level: HealthRisk['level']) => {
+  switch (level) {
+    case 'high':
+      return '#ef4444';
+    case 'medium':
+      return '#f59e0b';
+    case 'low':
+      return '#10b981';
+    default:
+      return '#10b981';
+  }
+};
 
 const RiskMap = () => {
-  const [userCoordinates, setUserCoordinates] = useState<{ lat: number; lon: number } | null>(null);
-  const [mapCenter, setMapCenter] = useState<{ lat: number; lon: number } | null>(null);
-  const [alerts, setAlerts] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Get user's current location
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserCoordinates({ lat: latitude, lon: longitude });
-        setMapCenter({ lat: latitude, lon: longitude });
-        fetchRiskAlerts(latitude, longitude);
-      },
-      (error) => {
-        console.error("Error fetching location:", error);
-        setError("Could not retrieve your location. Please allow location access.");
-      }
-    );
-  }, []);
-
-  // Fetch earthquake alerts from USGS API
-  const fetchRiskAlerts = async (lat: number, lon: number) => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=${lat}&longitude=${lon}&maxradiuskm=200`
-      );
-      const data = await response.json();
-      const alerts = data.features.map((feature: any) => ({
-        id: feature.id,
-        title: `Earthquake: M${feature.properties.mag}`,
-        description: feature.properties.place,
-        location: { lat: feature.geometry.coordinates[1], lng: feature.geometry.coordinates[0] },
-      }));
-      setAlerts(alerts);
-      setError(null);
-    } catch (error) {
-      console.error("Error fetching risk alerts:", error);
-      setError("Failed to fetch earthquake alerts. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Debounced fetch for location suggestions
-  const fetchSuggestions = debounce(async (query: string) => {
-    if (!query.trim()) return;
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1&limit=5`
-      );
-      const data = await response.json();
-      setSuggestions(data);
-    } catch (error) {
-      console.error("Error fetching suggestions:", error);
-      setError("Failed to fetch location suggestions. Please try again later.");
-    }
-  }, 500); // debounce for 500ms delay
-
-  // Handle search input change
-  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    fetchSuggestions(value);
-  };
-
-  // Handle search result click
-  const handleSearchResultClick = async (place: any) => {
-    const { lat, lon } = place;
-    setMapCenter({ lat: parseFloat(lat), lon: parseFloat(lon) });
-    fetchRiskAlerts(parseFloat(lat), parseFloat(lon));
-    setSearchQuery(place.display_name);
-    setSuggestions([]);
-  };
-
-  // Handle search submission
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${searchQuery}&format=json&limit=1`
-      );
-      const data = await response.json();
-      if (data.length > 0) {
-        const { lat, lon } = data[0];
-        setMapCenter({ lat: parseFloat(lat), lon: parseFloat(lon) });
-        fetchRiskAlerts(parseFloat(lat), parseFloat(lon));
-        setError(null);
-      } else {
-        setError("Location not found. Please try another search.");
-      }
-    } catch (error) {
-      console.error("Error performing search:", error);
-      setError("Failed to perform search. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="space-y-6">
-      {/* Search Section */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Risk Heat-Map Visualization</h2>
-        <div className="flex space-x-3 mb-4">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearchInputChange}
-            placeholder="Search for the desired location's heatmap"
-            className="border px-4 py-2 rounded-lg w-full"
-          />
-          <button
-            onClick={handleSearch}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-          >
-            Search
-          </button>
-        </div>
-        {/* Suggestions */}
-        {suggestions.length > 0 && (
-          <ul className="bg-gray-100 border rounded-lg p-3">
-            {suggestions.map((suggestion) => (
-              <li
-                key={suggestion.place_id}
-                className="cursor-pointer hover:bg-gray-200 p-2"
-                onClick={() => handleSearchResultClick(suggestion)}
-              >
-                {suggestion.display_name}
-              </li>
-            ))}
-          </ul>
-        )}
-        {/* Error Message */}
-        {error && <div className="text-red-500 mt-2">{error}</div>}
-      </div>
-
-      {/* Map Section */}
-      <div className="h-[500px] relative">
-        {loading && (
-          <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-75 z-10">
-            <ClipLoader color="#2563eb" size={50} />
-          </div>
-        )}
-        {mapCenter && (
+      <div className="bg-white rounded-lg shadow-sm p-4">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Health Risk Heat Map</h2>
+        <div className="h-[600px] rounded-lg overflow-hidden">
           <MapContainer
-            center={[mapCenter.lat, mapCenter.lon]}
-            zoom={8}
-            style={{ height: "100%", width: "100%" }}
+            center={[27.7008, 85.3000]}
+            zoom={13}
+            className="h-full w-full"
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution="&copy; OpenStreetMap contributors"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
-            {alerts.map((alert) => (
-              <Marker
-                key={alert.id}
-                position={[alert.location.lat, alert.location.lng]}
+            {healthRiskData.map((risk) => (
+              <Circle
+                key={risk.id}
+                center={[risk.location.lat, risk.location.lng]}
+                radius={500}
+                pathOptions={{
+                  color: getRiskColor(risk.level),
+                  fillColor: getRiskColor(risk.level),
+                  fillOpacity: 0.5,
+                }}
               >
                 <Popup>
-                  <h3>{alert.title}</h3>
-                  <p>{alert.description}</p>
+                  <div className="p-2">
+                    <h3 className="font-semibold">{risk.description}</h3>
+                    <ul className="mt-2 text-sm">
+                      {risk.recommendations.map((rec, index) => (
+                        <li key={index}>• {rec}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </Popup>
-              </Marker>
+              </Circle>
             ))}
           </MapContainer>
-        )}
+        </div>
       </div>
     </div>
   );
