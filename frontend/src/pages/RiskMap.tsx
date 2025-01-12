@@ -8,7 +8,7 @@ const mockRisks: HealthRisk[] = [
     id: '1',
     type: 'air',
     level: 'high',
-    location: { lat: 34.0522, lng: -118.2437 },
+    location: { lat: 27.7172, lng: 85.3240 },
     description: 'High air pollution levels detected',
     recommendations: ['Avoid outdoor activities', 'Wear N95 masks if going outside'],
   },
@@ -16,7 +16,7 @@ const mockRisks: HealthRisk[] = [
     id: '2',
     type: 'disease',
     level: 'medium',
-    location: { lat: 34.0622, lng: -118.2537 },
+    location: { lat: 27.7272, lng: 85.3340 },
     description: 'Increased flu cases reported',
     recommendations: ['Practice social distancing', 'Get vaccinated'],
   },
@@ -37,12 +37,18 @@ const getRiskColor = (level: HealthRisk['level']) => {
 
 const RiskMap = () => {
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow-sm p-4">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Health Risk Heat Map</h2>
-        <div className="h-[600px] rounded-lg overflow-hidden">
+    <div className="space-y-6 p-4 md:p-8 bg-gray-100 min-h-screen">
+      {/* Header Section */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-2xl font-bold text-gray-900">Health Risk Heat Map</h2>
+        <p className="text-gray-600 mt-2">Monitor health risks in your area and take necessary precautions.</p>
+      </div>
+
+      {/* Map Section */}
+      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="h-[600px] w-full">
           <MapContainer
-            center={[34.0522, -118.2437]}
+            center={[27.7172, 85.3240]} // Kathmandu
             zoom={13}
             className="h-full w-full"
           >
@@ -63,8 +69,8 @@ const RiskMap = () => {
               >
                 <Popup>
                   <div className="p-2">
-                    <h3 className="font-semibold">{risk.description}</h3>
-                    <ul className="mt-2 text-sm">
+                    <h3 className="font-semibold text-lg">{risk.description}</h3>
+                    <ul className="mt-2 text-sm text-gray-700">
                       {risk.recommendations.map((rec, index) => (
                         <li key={index}>• {rec}</li>
                       ))}
@@ -76,29 +82,30 @@ const RiskMap = () => {
           </MapContainer>
         </div>
       </div>
-      
+
+      {/* Summary Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <h3 className="font-semibold text-gray-900 mb-2">Air Quality</h3>
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="font-bold text-gray-900 mb-4">Air Quality</h3>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <span>Poor - Take precautions</span>
+            <div className="w-4 h-4 rounded-full bg-red-500"></div>
+            <span className="text-gray-700">Poor - Take precautions</span>
           </div>
         </div>
-        
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <h3 className="font-semibold text-gray-900 mb-2">Disease Outbreaks</h3>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="font-bold text-gray-900 mb-4">Disease Outbreaks</h3>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <span>Moderate risk - Stay alert</span>
+            <div className="w-4 h-4 rounded-full bg-yellow-500"></div>
+            <span className="text-gray-700">Moderate risk - Stay alert</span>
           </div>
         </div>
-        
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <h3 className="font-semibold text-gray-900 mb-2">Water Quality</h3>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="font-bold text-gray-900 mb-4">Water Quality</h3>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            <span>Good - Safe to use</span>
+            <div className="w-4 h-4 rounded-full bg-green-500"></div>
+            <span className="text-gray-700">Good - Safe to use</span>
           </div>
         </div>
       </div>
