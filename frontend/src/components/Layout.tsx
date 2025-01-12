@@ -11,7 +11,7 @@ const Navigation = () => {
     { to: '/alerts', icon: Bell, label: 'EarthQuake Alerts' },
     { to: '/ambulance', icon: Ambulance, label: 'Ambulance Co-ordination' },
     { to: '/symptoms', icon: Activity, label: 'A.I. Powered Symptoms Checker' },
-    { to: '/broadcast', icon: Radio, label: 'Emergency Broadcast' },
+    { to: '/broadcast', icon: Radio, label: 'Emergency Broadcast System' },
   ];
 
   
