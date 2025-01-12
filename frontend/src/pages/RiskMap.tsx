@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Circle, Popup, useMap } from 'react-leaflet'; // <-- Import useMap here
+import { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
 import { HealthRisk } from '../types';
 
 // API Keys
-const openCageApiKey = 'd0f371c0dce646bc95b2bbf48ce1e2c2'; // Get it from https://opencagedata.com/
-const airQualityApiKey = '626225c3b337119c4fe0e71e1d5fbf57'; // Get it from https://openweathermap.org/api
+const openCageApiKey = 'd0f371c0dce646bc95b2bbf48ce1e2c2'; // OpenCage API Key
+const airQualityApiKey = '626225c3b337119c4fe0e71e1d5fbf57'; // OpenWeather API Key
 
 const RiskMap = () => {
   const [location, setLocation] = useState<string>(''); // User's search location
@@ -38,7 +38,7 @@ const RiskMap = () => {
     }
   };
 
-  // Fetch the health risk data (AQI, air pollution, etc.) for a 100 km radius
+  // Fetch the health risk data (AQI, disease outbreaks, etc.) for a 100 km radius
   const fetchHealthRiskData = async (lat: number, lng: number) => {
     setLoading(true);
     setHealthRiskData([]); // Clear previous health risk data
@@ -49,21 +49,39 @@ const RiskMap = () => {
       const newHealthRiskData: HealthRisk[] = [];
 
       for (const { lat: nearbyLat, lng: nearbyLng } of coordinatesWithinRadius) {
+        // Fetch AQI Data
         const aqiResponse = await axios.get(
           `https://api.openweathermap.org/data/2.5/air_pollution?lat=${nearbyLat}&lon=${nearbyLng}&appid=${airQualityApiKey}`
         );
-
         const aqiData = aqiResponse.data.list[0].components;
         const aqiLevel = determineAQILevel(aqiData.pm2_5);
 
         newHealthRiskData.push({
-          id: `${nearbyLat}-${nearbyLng}`,
+          id: `${nearbyLat}-${nearbyLng}-aqi`,
           type: 'air',
           level: aqiLevel,
           location: { lat: nearbyLat, lng: nearbyLng },
           description: `Air quality index (PM2.5): ${aqiData.pm2_5}`,
           recommendations: getHealthRecommendations(aqiLevel),
         });
+
+        // Fetch Disease Outbreak Data (e.g., COVID-19 cases in the nearby region)
+        const outbreakResponse = await axios.get(`https://disease.sh/v3/covid-19/countries`);
+        const outbreakData = outbreakResponse.data.find((country: any) => country.countryInfo.lat === nearbyLat && country.countryInfo.long === nearbyLng);
+
+        if (outbreakData && outbreakData.cases > 10) { // Minimum of 10 cases
+          newHealthRiskData.push({
+            id: `${nearbyLat}-${nearbyLng}-outbreak`,
+            type: 'outbreak',
+            level: 'high', // Example level for outbreak (can add more logic here)
+            location: { lat: nearbyLat, lng: nearbyLng },
+            description: `Disease Outbreak: ${outbreakData.cases} cases`,
+            recommendations: [
+              'Follow local health guidelines',
+              'Wear a mask and practice social distancing',
+            ],
+          });
+        }
       }
 
       setHealthRiskData(newHealthRiskData);
@@ -77,9 +95,8 @@ const RiskMap = () => {
   // Get nearby coordinates (simplified approach, assumes nearby locations are within the 100 km radius)
   const getNearbyCoordinates = (lat: number, lng: number) => {
     const nearbyCoordinates = [];
-    const radius = 0.9; // Roughly 100 km in latitude/longitude
+    const radius = 0.1; // Roughly 100 km in latitude/longitude
 
-    // Example nearby locations (to be expanded based on actual needs)
     for (let i = -1; i <= 1; i++) {
       for (let j = -1; j <= 1; j++) {
         nearbyCoordinates.push({ lat: lat + i * radius, lng: lng + j * radius });
@@ -137,17 +154,14 @@ const RiskMap = () => {
     }
   };
 
-  // Call getUserLocation when the component mounts
   useEffect(() => {
     getUserLocation();
   }, []);
 
-  // Handle the search input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocation(e.target.value);
   };
 
-  // Handle the search form submit
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (location.trim()) {
@@ -155,7 +169,6 @@ const RiskMap = () => {
     }
   };
 
-  // Update the map view whenever coordinates change
   const UpdateMapView = () => {
     const map = useMap();
     if (coordinates) {
@@ -164,82 +177,74 @@ const RiskMap = () => {
     return null;
   };
 
-  // Function to get the color based on risk level
-  const getRiskColor = (level: string) => {
-    switch (level) {
-      case 'high':
-        return 'red';
-      case 'medium':
-        return 'orange';
-      case 'low':
-        return 'green';
-      default:
-        return 'blue'; // default color
+  // Function to get the color based on risk level for AQI and outbreaks
+  const getRiskColor = (type: string, level: string) => {
+    if (type === 'air') {
+      // Color for AQI
+      switch (level) {
+        case 'high':
+          return 'red';
+        case 'medium':
+          return 'orange';
+        case 'low':
+          return 'green';
+        default:
+          return 'blue'; // Default for AQI
+      }
+    } else if (type === 'outbreak') {
+      // Color for outbreaks
+      return 'purple'; // Use purple for outbreaks
     }
+    return 'blue';
   };
 
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-4">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Health Risk Heat-Map</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Health Risk Heat Map</h2>
 
         <form onSubmit={handleSearchSubmit} className="mb-4">
           <input
             type="text"
             value={location}
             onChange={handleSearchChange}
-            placeholder="Enter location"
-            className="border border-gray-300 rounded p-2 w-full"
+            placeholder="Search for a location"
+            className="border px-4 py-2 rounded-md w-full"
           />
-          <button type="submit" className="mt-2 w-full bg-blue-500 text-white py-2 rounded">
-            Search
+          <button type="submit" className="bg-blue-500 text-white rounded-md px-4 py-2 mt-2">
+            Search Location
           </button>
         </form>
 
-        {loading && <p>Loading Real-Time Health Data...</p>}
-        {error && <p className="text-red-500">{error}</p>}
+        <div className="relative w-full h-96">
+          {loading && <div>Loading...</div>}
+          {error && <div className="text-red-500">{error}</div>}
 
-        <div className="h-[600px] rounded-lg overflow-hidden">
-          <MapContainer
-            center={coordinates ? [coordinates.lat, coordinates.lng] : [27.7008, 85.3000]}
-            zoom={coordinates ? 10 : 13} // Set zoom to 10 for user location or search location
-            className="h-full w-full"
-            whenCreated={map => {
-              // This ensures the map is updated with the initial user location when the map is created
-              if (coordinates) {
-                map.setView([coordinates.lat, coordinates.lng], 10);
-              }
-            }}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-
-            {/* Update the map view based on the coordinates */}
+          <MapContainer center={[coordinates?.lat || 0, coordinates?.lng || 0]} zoom={10} style={{ height: '100%' }}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             <UpdateMapView />
 
             {healthRiskData.map((risk) => (
-              <Circle
+              <CircleMarker
                 key={risk.id}
-                center={[risk.location.lat, risk.location.lng]}
-                radius={500}
-                pathOptions={{
-                  color: getRiskColor(risk.level),
-                  fillColor: getRiskColor(risk.level),
-                  fillOpacity: 0.3,
-                }}
+                center={risk.location}
+                radius={12} // Size of the bubble
+                color={getRiskColor(risk.type, risk.level)} // Color based on the risk level
+                fillOpacity={0.6}
               >
                 <Popup>
-                  <h3 className="text-lg font-semibold">{`Risk Level: ${risk.level}`}</h3>
-                  <p>{risk.description}</p>
+                  <strong>Location:</strong> {risk.location.lat.toFixed(4)}, {risk.location.lng.toFixed(4)}<br />
+                  <strong>Risk Type:</strong> {risk.type === 'air' ? 'AQI' : 'Outbreak'}<br />
+                  <strong>Level:</strong> {risk.level}<br />
+                  <strong>Description:</strong> {risk.description}<br />
+                  <strong>Precautions:</strong>
                   <ul>
                     {risk.recommendations.map((rec, index) => (
                       <li key={index}>{rec}</li>
                     ))}
                   </ul>
                 </Popup>
-              </Circle>
+              </CircleMarker>
             ))}
           </MapContainer>
         </div>
