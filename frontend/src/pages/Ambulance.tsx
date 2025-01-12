@@ -88,7 +88,7 @@ const Ambulance = () => {
                       ? 'bg-green-100 text-green-800' 
                       : 'bg-red-100 text-red-800'
                   }`}>
-                    {service.available ? 'Available' : 'Busy'}
+                    {service.available ? 'Available' : 'Unavailable'}
                   </span>
                 </div>
                 <div className="mt-4">
@@ -99,7 +99,7 @@ const Ambulance = () => {
                       window.location.href = `tel:${service.contact}`;
                     }}
                   >
-                    Call Now
+                    Inquiry Now
                   </button>
                 </div>
               </div>
@@ -124,7 +124,7 @@ const Ambulance = () => {
                   <Popup>
                     <div className="p-2">
                       <h3 className="font-semibold">{service.name}</h3>
-                      <p className="text-sm mt-1">ETA: {service.eta} minutes</p>
+                      <p className="text-sm mt-1">ETA: {service.eta} Minutes Away</p>
                     </div>
                   </Popup>
                 </Marker>
@@ -139,7 +139,7 @@ const Ambulance = () => {
         <div>
           <h3 className="font-semibold text-blue-900">Emergency Guidelines</h3>
           <p className="text-sm text-blue-800 mt-1">
-            If this is a life-threatening emergency, please dial 911 immediately. Our service helps coordinate
+            If this is a life-threatening emergency, Please dial 911 immediately. Our service helps coordinate
             non-emergency medical transport and supplementary emergency services.
           </p>
         </div>
