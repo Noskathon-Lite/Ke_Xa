@@ -79,7 +79,7 @@ const Ambulance = () => {
                       </div>
                       <div className="flex items-center text-sm text-gray-600">
                         <Clock className="w-4 h-4 mr-2" />
-                        ETA: {service.eta} minutes
+                        ETA: {service.eta} Minutes Away
                       </div>
                     </div>
                   </div>
