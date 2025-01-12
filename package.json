@@ -1,5 +1,5 @@
 {
-  "name": "health_safety_app",
+  "name": "health",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -9,11 +9,20 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Our Health Emergency and Safety Web App will be designed to meet essential needs in managing health crises and preparing for disasters. The app will provide real-time health risk information, earthquake alerts, and ambulance coordination, equipping users with the necessary tools to stay informed and take prompt action during emergencies.",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "mongoose": "^8.9.4",
+    "nodemon": "^3.1.9",
     "socket.io": "^4.8.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Noskathon-Lite/Ke_Xa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Noskathon-Lite/Ke_Xa/issues"
+  },
+  "homepage": "https://github.com/Noskathon-Lite/Ke_Xa#readme"
 }
