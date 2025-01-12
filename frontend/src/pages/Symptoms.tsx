@@ -16,8 +16,10 @@ const mockSymptoms: Symptom[] = [
     severity: 'medium',
     recommendations: [
       'Rest and stay hydrated',
+      'Take medication as prescribed',
+      'Monitor temperature',
       'Take over-the-counter fever reducers',
-      'Monitor temperature regularly',
+      'Monitor Temperature Regularly With The Help of Thermo-meter',
       'Seek medical attention if fever persists over 3 days',
     ],
   },
@@ -28,6 +30,9 @@ const mockSymptoms: Symptom[] = [
     recommendations: [
       'Seek immediate medical attention',
       'Try to remain calm',
+      'Sit up straight and lean forward',
+      'Use a fan to blow air across your face',
+      'Avoid lying down',
       'Sit upright to help breathing',
       'Use prescribed inhaler if available',
     ],
@@ -49,6 +54,7 @@ const mockSymptoms: Symptom[] = [
     severity: 'low',
     recommendations: [
       'Rest in a quiet, dark room',
+      'Turn on Dark Mode in your phone',
       'Stay hydrated',
       'Try over-the-counter pain relievers',
       'Apply cold or warm compress',
@@ -67,7 +73,7 @@ const App = () => {
     if (selectedSymptom) {
       const autoMessage = {
         sender: 'bot',
-        text: `You selected: ${selectedSymptom.name}. Here are some recommendations: ${selectedSymptom.recommendations.join(
+        text: `You selected: ${selectedSymptom.name}. Here are some Recommendations: ${selectedSymptom.recommendations.join(
           ', '
         )}.`,
       };
