@@ -79,7 +79,7 @@ const Broadcast = () => {
         {/* Display Error State */}
         {error && (
           <p className="text-red-600">
-            Error: {error}. Please Try Refreshing The Page.
+            Error: {error}. Please Try Refreshing The Page Hai Ta.
           </p>
         )}
 
