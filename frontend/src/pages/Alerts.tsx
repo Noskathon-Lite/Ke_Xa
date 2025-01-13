@@ -151,7 +151,7 @@ const Alerts = () => {
           placeholder="Search for a location"
           className="w-full p-4 rounded-lg shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 text-lg"
           />
-        {loadingSuggestions && <p>Loading suggestions...</p>}
+        {loadingSuggestions && <p>Loading Suggestions...</p>}
 
         {suggestions.length > 0 && (
           <ul className="absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
