@@ -141,7 +141,7 @@ const Alerts = () => {
     <div className="rounded-2xl border-2 border-black container mx-auto p-6" 
 >
       
-      <h1 className='text-4xl font-bold text-center my-2'>Earthquake Based Alert Map</h1>
+      <h1 className='text-4xl font-bold text-center my-2'>Live Earthquake Alerts Map</h1>
       <div className="relative w-full z-50"> {/* Added z-50 to ensure dropdown appears above the map */}
   <input
     type="text"
