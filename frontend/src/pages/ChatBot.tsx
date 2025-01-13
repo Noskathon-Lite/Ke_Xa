@@ -44,7 +44,7 @@ const Chatbot = () => {
         ...prev,
         {
           sender: 'bot',
-          text: 'An error occurred while processing your request. Please try again later.',
+          text: 'An error Occurred While Processing Your Request. Please Try Again Later.',
         },
       ]);
     } finally {
