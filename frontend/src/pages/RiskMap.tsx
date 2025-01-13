@@ -245,7 +245,7 @@ const RiskMap = () => {
 
 <div className="rounded-2xl border-2 border-black container mx-auto p-6" 
 >
-      <h1 className="text-4xl font-bold text-center my-2">Health Risk Map</h1>
+      <h1 className="text-4xl font-bold text-center my-2">Health Risk Heat-Map</h1>
       <div className="flex justify-center mb-2">
       <input
           type="text"
