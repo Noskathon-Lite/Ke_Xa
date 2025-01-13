@@ -11,7 +11,6 @@
 - **Presenter(s)**: Harsh chaudhary ,Pranil poudel ,Madhusudan Bhandari ,Kaushal Shah 
 
 ###Overview
-
 Our Health Emergency and Safety Web App is designed to meet essential needs in managing health crises and preparing for disasters. The app will provide real-time health risk information, earthquake alerts, and ambulance coordination, equipping users with the necessary tools to stay informed and take prompt action during emergencies.
 
 Our App will feature the following key components:
