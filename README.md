@@ -52,7 +52,7 @@ This initiative aligns with the theme of AI for Good & Climate Action through te
 
 **Technology Stack**
 
-### Content:
+
 1. **Frontend**:
    - HTML, CSS, JavaScript, TypeScript
 2. **Backend**:
