@@ -49,6 +49,10 @@ This initiative aligns with the theme of AI for Good & Climate Action through te
 5. **Real-Time Alerts**:
    - Notifications for local health hazards and emergencies.
 
+**Overviews**
+   ![Dashboard](<Screenshot 2025-01-13 102435.png>)
+   
+
 **Technology Stack**
 
 
