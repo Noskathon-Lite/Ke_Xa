@@ -94,7 +94,7 @@ const Chatbot = () => {
                 <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce"></div>
                 <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce200"></div>
                 <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce400"></div>
-                <span className="text-white text-sm">Thinking...</span>
+                <span className="text-white text-sm">Let me think...</span>
               </div>
             )}
 
