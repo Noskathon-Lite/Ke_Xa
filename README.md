@@ -122,7 +122,6 @@ This initiative aligns with the theme of AI for Good & Climate Action through te
 
 **Thank You!**
 
-### Content:
 
 - **Contact Information**:
   - Email: [pranilpaoudel@gmail.com , info@kaushalsah.com.np ,harsh.221715@ncit.edu.np ,madhusudanb636@gmail.com]
