@@ -99,7 +99,6 @@ This initiative aligns with the theme of AI for Good & Climate Action through te
 3. **Challenge**: Optimizing performance for mobile users.
    - **Solution**: Leveraged Bootstrap and minimized resource usage.
 
----
 
  **Future Enhancements**
 
