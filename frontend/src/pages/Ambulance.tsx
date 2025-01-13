@@ -59,7 +59,7 @@ const Ambulance = () => {
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Ambulances Near You</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">Ambulances Near Your Surrounding</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
