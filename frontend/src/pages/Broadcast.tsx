@@ -190,7 +190,7 @@ const BroadcastComponent = () => {
           <div>
             <h3 className="font-semibold text-blue-900">Stay Informed</h3>
             <p className="text-sm text-blue-800 mt-1">
-              Subscribe to receive real-time alerts about emergencies in your area. We'll only send
+              Subscribe us to receive real-time alerts about emergencies in your area. We'll only send
               you important notifications.
             </p>
           </div>
