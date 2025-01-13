@@ -55,7 +55,7 @@ const Layout = () => {
           {/* Left side (logo and title) */}
           <div className="flex items-center space-x-4">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Transhumanism_h%2B.svg/2048px-Transhumanism_h%2B.svg.png" alt="Logo" className="h-10" />
-            <h1 className="text-3xl font-bold text-gray-900">Health Emergency & Safety App</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Health Emergency & Safety Web App</h1>
           </div>
 
           {/* Right side (date, time, and flag) */}
