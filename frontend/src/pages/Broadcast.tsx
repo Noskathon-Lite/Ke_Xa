@@ -196,8 +196,8 @@ const BroadcastComponent = () => {
           <div>
             <h3 className="font-semibold text-blue-900">Stay Informed</h3>
             <p className="text-sm text-blue-800 mt-1">
-              Subscribe to receive real-time alerts about emergencies in your area. We'll only send
-              you important notifications.
+              Subscribe to receive real-time alerts about emergencies in your area. We'll only Send
+              you Important Notifications.
             </p>
           </div>
         </div>
@@ -207,8 +207,8 @@ const BroadcastComponent = () => {
           <div>
             <h3 className="font-semibold text-green-900">Notification Settings</h3>
             <p className="text-sm text-green-800 mt-1">
-              Customize your alert preferences and choose which types of notifications you want to
-              receive.
+              Customize Your Alert Preferences And Choose Which Types Of Notifications You Want To
+              Receive.
             </p>
           </div>
         </div>
