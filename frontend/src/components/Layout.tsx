@@ -54,14 +54,24 @@ const Layout = () => {
         <div className="flex justify-between items-center max-w-screen-xl mx-auto">
           {/* Left side (logo and title) */}
           <div className="flex items-center space-x-4">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Transhumanism_h%2B.svg/2048px-Transhumanism_h%2B.svg.png" alt="Logo" className="h-10" />
-            <h1 className="text-3xl font-bold text-gray-900">Health Emergency & Safety Web App</h1>
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Transhumanism_h%2B.svg/2048px-Transhumanism_h%2B.svg.png"
+              alt="Logo"
+              className="h-10"
+            />
+            <h1 className="text-3xl font-bold text-gray-900">
+              Health Emergency & Safety Web App
+            </h1>
           </div>
 
           {/* Right side (date, time, and flag) */}
           <div className="flex items-center space-x-4">
             <div className="text-red-500 font-medium">{dateTime}</div>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Flag_of_Nepal.png" alt="Nepali Flag" className="h-6 w-6" />
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/d/da/Flag_of_Nepal.png"
+              alt="Nepali Flag"
+              className="h-6 w-6"
+            />
           </div>
         </div>
       </nav>
@@ -77,13 +87,13 @@ const Layout = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`flex items-center space-x-2 p-3 rounded-lg w-full text-left transition-all duration-300 ${
+                className={`flex items-center space-x-2 p-3 rounded-lg w-full text-left transition-all duration-300 transform ${
                   isActive
                     ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-600 hover:bg-gray-50'
+                    : 'text-gray-600 hover:bg-gray-50 hover:shadow-md hover:text-blue-500 hover:scale-105'
                 }`}
               >
-                <Icon className="w-6 h-6" />
+                <Icon className="w-6 h-6 transition-transform duration-300 hover:scale-110" />
                 <span className="text-sm">{link.label}</span>
               </Link>
             );
