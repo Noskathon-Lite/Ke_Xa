@@ -179,7 +179,7 @@ const BroadcastComponent = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-700">No broadcasts available at this moment.</p>
+              <p className="text-gray-700">No broadcasts Available At this Moment.Please try again later.</p>
             ))}
         </div>
       </div>
