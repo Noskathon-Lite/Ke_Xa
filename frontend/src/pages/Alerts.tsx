@@ -141,7 +141,7 @@ const Alerts = () => {
     <div className="rounded-2xl border-2 border-black container mx-auto p-6" 
 >
 
-      <h1 className='text-4xl font-bold text-center my-8'>Earthquake Alerts Based Risk Map</h1>
+      <h1 className='text-4xl font-bold text-center my-8'>Earthquake Based Alert Map</h1>
       <div className="flex justify-center mb-8">
         <input
           type="text"
