@@ -50,8 +50,13 @@ This initiative aligns with the theme of AI for Good & Climate Action through te
    - Notifications for local health hazards and emergencies.
 
 **Overviews**
+   - Dashboard (Home)
    ![Dashboard](<Screenshot 2025-01-13 102435.png>)
+   - Earthquake Alerts Dashboard
    ![Earthquake Alerts](eq.png)
+   - Available Ambulance
+   ![Available Ambulance](amb.png)
+
 
 **Technology Stack**
 
