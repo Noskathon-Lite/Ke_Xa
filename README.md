@@ -134,3 +134,7 @@ This initiative aligns with the theme of AI for Good & Climate Action through te
 
 ---
 
+ cohere-chatbot
+ opencage-Earthquake
+ OSM/Leaflet -Map
+ OpenWether- AQI
