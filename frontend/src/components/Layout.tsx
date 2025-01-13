@@ -84,7 +84,7 @@ const Layout = () => {
             <h2
               className="text-lg font-bold text-gray-800 transition-colors duration-300 hover:text-blue-600 cursor-pointer"
             >
-              Your Health App
+              DASHBOARD
             </h2>
           </div>
 

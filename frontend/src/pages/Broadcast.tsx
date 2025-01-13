@@ -135,7 +135,7 @@ const BroadcastComponent = () => {
         )}
 
         {/* Display Loading State */}
-        {loading && <p className="text-gray-700">Loading Emergency Broadcasts...</p>}
+        {loading && <p className="text-gray-700">Loading Real-Time Emergency Broadcasts...</p>}
 
         {/* Display Error State */}
         {error && (
