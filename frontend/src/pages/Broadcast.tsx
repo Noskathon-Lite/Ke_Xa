@@ -143,7 +143,7 @@ const BroadcastComponent = () => {
         {/* Display Error State */}
         {error && (
           <p className="text-red-600">
-            Error: {error}. Please try refreshing the page.
+            Error: {error}. Please Try Refreshing The Page.
           </p>
         )}
 
@@ -185,7 +185,7 @@ const BroadcastComponent = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-700">No broadcasts available at the moment.</p>
+              <p className="text-gray-700">No broadcasts Available at this moment.</p>
             ))}
         </div>
       </div>
