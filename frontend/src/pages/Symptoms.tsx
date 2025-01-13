@@ -143,7 +143,7 @@ const App = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-1 space-y-4">
-              <h3 className="font-semibold text-gray-700">Common Symptoms</h3>
+              <h3 className="font-semibold text-gray-700">COMMON SYMPTOMS</h3>
               {mockSymptoms.map((symptom) => (
                 <button
                   key={symptom.id}
