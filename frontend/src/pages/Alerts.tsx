@@ -141,35 +141,47 @@ const Alerts = () => {
     <div className="rounded-2xl border-2 border-black container mx-auto p-6" 
 >
       
-      <h1 className='text-4xl font-bold text-center my-8'>Earthquake Based Alert Map</h1>
-      <div className="flex justify-center mb-8">
-        <input
-          type="text"
-          value={location}
-          onChange={handleSearch} // Handle typing for suggestions
-          onKeyDown={handleKeyPress} // Handle Enter key to trigger fetch
-          placeholder="Search for a location"
-          className="w-full p-4 rounded-lg shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 text-lg"
-          />
-        {loadingSuggestions && <p>Loading Suggestions...</p>}
+      <h1 className='text-4xl font-bold text-center my-2'>Earthquake Based Alert Map</h1>
+      <div className="relative w-full z-50"> {/* Added z-50 to ensure dropdown appears above the map */}
+  <input
+    type="text"
+    value={location}
+    onChange={handleSearch} // Handle typing for suggestions
+    onKeyDown={handleKeyPress} // Handle Enter key to trigger fetch
+    placeholder="Search for a location"
+    className="w-full p-2 mb-2 rounded-lg shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 text-lg"
+  />
 
-        {suggestions.length > 0 && (
-          <ul className="absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
-            {suggestions.map((suggestion: any, index: number) => (
-              <li
-                key={suggestion.place_id || `${suggestion.formatted}-${index}`} // Ensure unique key
-                className="px-3 py-2 cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSuggestionSelect(suggestion.geometry.lat, suggestion.geometry.lng)}
-              >
-                {suggestion.formatted}
-              </li>
-            ))}
-          </ul>
-        )}
-        {suggestions.length === 0 && !loadingSuggestions && location && (
-          <p>No Suggestions Found.</p> // Fallback message when no suggestions are found
-        )}
-      </div>
+  {loadingSuggestions && <p></p>}
+
+  {suggestions.length > 0 && (
+    <ul
+      className="absolute mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-100"
+      style={{
+        maxWidth: '400px', // Set maximum width for the dropdown
+        width: '100%', // Match input field width
+      }}
+    >
+      {suggestions.map((suggestion: any, index: number) => (
+        <li
+          key={suggestion.place_id || `${suggestion.formatted}-${index}`} // Ensure unique key
+          className="px-3 py-2 cursor-pointer hover:bg-gray-100"
+          onClick={() =>
+            handleSuggestionSelect(suggestion.geometry.lat, suggestion.geometry.lng)
+          }
+        >
+          {suggestion.formatted}
+        </li>
+      ))}
+    </ul>
+  )}
+
+  {suggestions.length === 0 && !loadingSuggestions && location && (
+    <p className="mt-1 text-sm text-gray-500">No Suggestions Found.</p>
+  )}
+</div>
+
+
 
       {loading && <p>Loading Risk Data...</p>}
 

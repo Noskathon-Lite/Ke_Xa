@@ -79,7 +79,16 @@ const Layout = () => {
       <div className="flex pt-15">
         {/* Sidebar */}
         <nav className="w-72 bg-white border-r border-gray-200 fixed left-0 top-20 bottom-0 flex flex-col items-start p-4 space-y-4 shadow-lg">
-          <div className="text-lg font-semibold mb-4">Your Health App</div>
+          {/* Section Title */}
+          <div className="mb-4 w-full border-b-2 border-gray-200 pb-2">
+            <h2
+              className="text-lg font-bold text-gray-800 transition-colors duration-300 hover:text-blue-600 cursor-pointer"
+            >
+              Your Health App
+            </h2>
+          </div>
+
+          {/* Links */}
           {links.map((link) => {
             const Icon = link.icon;
             const isActive = location.pathname === link.to;
