@@ -132,8 +132,8 @@ This initiative aligns with the theme of AI for Good & Climate Action through te
   - "We are happy to answer any questions!"
 
 ---
-
+<!-- 
  cohere-chatbot
  opencage-Earthquake
  OSM/Leaflet -Map
- OpenWether- AQI
+ OpenWether- AQI -->
