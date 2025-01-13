@@ -51,7 +51,7 @@ This initiative aligns with the theme of AI for Good & Climate Action through te
 
 **Overviews**
    ![Dashboard](<Screenshot 2025-01-13 102435.png>)
-   
+   ![Earthquake Alerts](eq.png)
 
 **Technology Stack**
 
