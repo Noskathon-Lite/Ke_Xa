@@ -167,7 +167,7 @@ const App = () => {
                 <div className="space-y-6">
                   <div className={`rounded-lg p-4 ${getSeverityColor(selectedSymptom.severity)}`}>
                     <h3 className="font-semibold mb-2">{selectedSymptom.name}</h3>
-                    <p className="text-sm capitalize">Severity Level: {selectedSymptom.severity}</p>
+                    <p className="text-sm capitalize">SEVERITY LEVEL: {selectedSymptom.severity}</p>
                   </div>
 
                   <div>
