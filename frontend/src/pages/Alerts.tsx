@@ -201,8 +201,8 @@ const Alerts = () => {
               key={index}
               position={[feature.geometry.coordinates[1], feature.geometry.coordinates[0]]}
               icon={L.icon({
-                iconUrl: 'https://example.com/earthquake-icon.png', // Customize the icon
-                iconSize: [25, 25],
+                iconUrl: 'https://e7.pngegg.com/pngimages/263/579/png-clipart-earthquake-weather-computer-icons-earthquake-miscellaneous-text.png', // Customize the icon
+                iconSize: [40, 40],
               })}
             >
               <Popup>
