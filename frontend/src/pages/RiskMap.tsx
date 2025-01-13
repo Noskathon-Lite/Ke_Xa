@@ -166,7 +166,7 @@ const RiskMap = () => {
     switch (level) {
       case 'high':
         return [
-          'Avoid outdoor activities if sensitive to pollution',
+          'Avoid Outdoor Activities if Sensitive to Pollution',
           'Wear an N95 mask if necessary',
         ];
       case 'medium':
