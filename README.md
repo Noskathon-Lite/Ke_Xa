@@ -116,7 +116,7 @@ This initiative aligns with the theme of AI for Good & Climate Action through te
 ### Content:
 - **[Pranil poudel , Kaushal Shaha]**: Frontend development
 - **[Harsha Chaudhary ,Madhusudan Bhandari]**: Backend development
-- **[Pranil , Harsha , Madhusudan , Kaushal]**: API integrations and deployment
+- **[Pranil, Harsha , Madhusudan , Kaushal]**: API integrations and deployment
 
 
 **Thank You!**
