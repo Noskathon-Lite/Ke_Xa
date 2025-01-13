@@ -94,12 +94,12 @@ const Chatbot = () => {
                 <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce"></div>
                 <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce200"></div>
                 <div className="w-2.5 h-2.5 bg-white rounded-full animate-bounce400"></div>
-                <span className="text-white text-sm">Typing...</span>
+                <span className="text-white text-sm">Thinking...</span>
               </div>
             )}
 
             {loading && (
-              <div className="text-center text-white text-sm">Generating response...</div>
+              <div className="text-center text-white text-sm">Generating Response...</div>
             )}
           </div>
 
