@@ -99,7 +99,7 @@ const Chatbot = () => {
             )}
 
             {loading && (
-              <div className="text-center text-white text-sm">Generating best Response for you...</div>
+              <div className="text-center text-white text-sm">Generating Best Possible Response For you...</div>
             )}
           </div>
 
