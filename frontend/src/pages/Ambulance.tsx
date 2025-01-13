@@ -139,7 +139,7 @@ const Ambulance = () => {
         <div>
           <h3 className="font-semibold text-blue-900">Emergency Guidelines</h3>
           <p className="text-sm text-blue-800 mt-1">
-            If this is a life-threatening emergency, Please Consider Dialing 102 Immediately. Our service helps co-ordinate
+            If this is a life-threatening emergency, Please Consider Dialing 102 ASAP. Our service helps co-ordinate
             Non-Emergency Medical Transport and Supplementary Emergency Services.
           </p>
         </div>
