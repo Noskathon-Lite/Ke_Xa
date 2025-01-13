@@ -38,7 +38,6 @@ This initiative aligns with the theme of AI for Good & Climate Action through te
 
 **Core Features**
 
-### Content:
 1. **Emergency SOS**:
    - One-tap button to alert emergency contacts with location.
 2. **First Aid Guidance**:
