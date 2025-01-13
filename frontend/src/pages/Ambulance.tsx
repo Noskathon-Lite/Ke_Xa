@@ -8,25 +8,25 @@ const mockAmbulances: EmergencyService[] = [
   {
     id: '1',
     type: 'ambulance',
-    name: 'City Emergency Response Unit 1',
+    name: 'Mahanagar Emergency Response Unit 1',
     location: { lat: 27.6859, lng: 85.3469 },
-    contact: '+1-555-0123',
+    contact: '+977-555-0123',
     available: true,
     eta: 5
   },
   {
     id: '2',
     type: 'ambulance',
-    name: 'Medical Transport Unit 2',
+    name: 'Mahanagar Medical Unit 1',
     location: { lat: 27.6748, lng: 85.3565 },
-    contact: '+1-555-0124',
+    contact: '+977-555-0124',
     available: false,
     eta: 8
   },
   {
     id: '12',
     type: 'ambulance',
-    name: 'Medical Transport Unit 2',
+    name: 'Mahanagar Medical Unit 2',
     location: { lat: 37.6748, lng: 85.3565 },
     contact: '+977-9800760000',
     available: true,
@@ -35,9 +35,9 @@ const mockAmbulances: EmergencyService[] = [
   {
     id: '3',
     type: 'ambulance',
-    name: 'Medical Transport Unit 23',
+    name: 'Mahanagar Medical Unit 3',
     location: { lat: 27.6712, lng: 85.3415 },
-    contact: '+1-575-06764',
+    contact: '+977-575-06764',
     available: true,
     eta: 67
   },
@@ -46,7 +46,7 @@ const mockAmbulances: EmergencyService[] = [
     type: 'ambulance',
     name: 'Medical Transport Unit 5',
     location: { lat: 27.6854, lng: 85.335 },
-    contact: '+1-879-0124',
+    contact: '+977-879-0124',
     available: true,
     eta: 90
   }
