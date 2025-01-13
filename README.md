@@ -56,6 +56,8 @@ This initiative aligns with the theme of AI for Good & Climate Action through te
    ![Earthquake Alerts](eq.png)
    - Available Ambulance
    ![Available Ambulance](amb.png)
+   - AI Based Symptoms Checker and Chat Bot
+   ![AI Symptoms Checker & Chat bot](sck.png)
 
 
 **Technology Stack**
