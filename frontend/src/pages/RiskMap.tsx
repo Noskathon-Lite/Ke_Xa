@@ -156,8 +156,8 @@ const RiskMap = () => {
 
   // Determine the AQI level based on PM2.5 data
   const determineAQILevel = (pm25: number) => {
-    if (pm25 > 35) return 'high';
-    if (pm25 > 12) return 'medium';
+    if (pm25 > 85) return 'high';
+    if (pm25 > 42) return 'medium';
     return 'low';
   };
 
