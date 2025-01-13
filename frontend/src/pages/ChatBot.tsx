@@ -65,7 +65,7 @@ const Chatbot = () => {
       {isChatVisible && (
         <div className="fixed bottom-24 right-6 w-full sm:w-96 md:w-[400px] lg:w-[500px] h-[80vh] sm:h-96 bg-gradient-to-tl from-blue-400 to-blue-600 shadow-xl border rounded-2xl flex flex-col">
           <div className="p-4 bg-blue-800 text-white font-semibold flex justify-between items-center rounded-t-2xl shadow-lg">
-            <span className="text-sm sm:text-lg">AI Health Assistant</span>
+            <span className="text-sm sm:text-lg">A.I. Health Assistant</span>
             <button
               className="text-white text-xl"
               onClick={() => setIsChatVisible(false)}
