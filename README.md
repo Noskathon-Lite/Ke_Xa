@@ -55,7 +55,7 @@ This initiative aligns with the theme of AI for Good & Climate Action through te
 1. **Frontend**:
    - HTML, CSS, JavaScript, TypeScript
 2. **Backend**:
-   - Node.js / Django (Example: API Handling)
+   - Node.js(Example: API Handling)
 3. **APIs**:
    - Geolocation API
    - Healthcare Data API (Optional)
