@@ -48,31 +48,28 @@ const BroadcastComponent = () => {
     try {
       setLoading(true);
       setError(null);
+      setBroadcasts([]); // Clear old data to prevent flicker of stale data
 
-      const response = await fetch('https://bipadportal.gov.np/api/v1/alert/');
+      // Append cache-busting query parameter
+      const response = await fetch(`https://bipadportal.gov.np/api/v1/alert/?_timestamp=${Date.now()}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch broadcasts: ${response.statusText}`);
       }
 
       const data = await response.json();
-      const broadcasts = data.results.map((item: any) => ({
-        id: item.id.toString(),
-        type: mapReferenceTypeToBroadcastType(item.referenceType),
-        title: item.title,
-        message: item.description || 'No description provided.',
-        timestamp: item.createdOn,
-        area: item.region || 'Unknown Area',
-      }));
+      const broadcasts = data.results
+        .map((item: any) => ({
+          id: item.id.toString(),
+          type: mapReferenceTypeToBroadcastType(item.referenceType),
+          title: item.title,
+          message: item.description || 'No description provided.',
+          timestamp: item.createdOn,
+          area: item.region || 'Unknown Area',
+        }))
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) // Sort by timestamp in descending order
+        .slice(0, 20); // Limit to the latest 20 broadcasts
 
-      // Sort broadcasts by timestamp in descending order
-      broadcasts.sort((a, b) => {
-        const dateA = new Date(a.timestamp);
-        const dateB = new Date(b.timestamp);
-        return dateB.getTime() - dateA.getTime(); // Sorting in descending order
-      });
-
-      // Limit to only the latest 20 broadcasts
-      setBroadcasts(broadcasts.slice(0, 20));
+      setBroadcasts(broadcasts);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -94,7 +91,7 @@ const BroadcastComponent = () => {
   const handleSubscribeToggle = () => {
     const currentDate = new Date().toLocaleDateString();
     const newSubscribedState = !subscribed;
-    
+
     setSubscribed(newSubscribedState);
     setSubscriptionDate(newSubscribedState ? currentDate : null);
 
@@ -152,9 +149,7 @@ const BroadcastComponent = () => {
           {!loading &&
             !error &&
             (broadcasts.length > 0 ? (
-              <div
-                className="overflow-y-auto max-h-80" // Added scrollable container
-              >
+              <div className="overflow-y-auto max-h-80">
                 {broadcasts.map((broadcast) => (
                   <div
                     key={broadcast.id}
@@ -171,10 +166,9 @@ const BroadcastComponent = () => {
                           <span className="font-medium">Area: </span>
                           {broadcast.area}
                         </div>
-                        {/* Display the Broadcast Date */}
                         <div className="mt-2 text-xs text-gray-500">
                           <span className="font-medium">Date: </span>
-                          {new Date(broadcast.timestamp).toLocaleDateString()} {/* Formatting the date */}
+                          {new Date(broadcast.timestamp).toLocaleDateString()}
                         </div>
                       </div>
                       <span className="text-xs">
@@ -185,7 +179,7 @@ const BroadcastComponent = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-700">No broadcasts Available at this moment.</p>
+              <p className="text-gray-700">No broadcasts available at this moment.</p>
             ))}
         </div>
       </div>
@@ -196,8 +190,8 @@ const BroadcastComponent = () => {
           <div>
             <h3 className="font-semibold text-blue-900">Stay Informed</h3>
             <p className="text-sm text-blue-800 mt-1">
-              Subscribe to receive real-time alerts about emergencies in your area. We'll only Send
-              you Important Notifications.
+              Subscribe to receive real-time alerts about emergencies in your area. We'll only send
+              you important notifications.
             </p>
           </div>
         </div>
@@ -207,8 +201,8 @@ const BroadcastComponent = () => {
           <div>
             <h3 className="font-semibold text-green-900">Notification Settings</h3>
             <p className="text-sm text-green-800 mt-1">
-              Customize Your Alert Preferences And Choose Which Types Of Notifications You Want To
-              Receive.
+              Customize your alert preferences and choose which types of notifications you want to
+              receive.
             </p>
           </div>
         </div>
