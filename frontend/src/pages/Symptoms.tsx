@@ -171,7 +171,7 @@ const App = () => {
                   </div>
 
                   <div>
-                    <h4 className="font-semibold mb-3">Recommendations:</h4>
+                    <h4 className="font-semibold mb-3">RECOMMENDATION:</h4>
                     <ul className="space-y-2">
                       {selectedSymptom.recommendations.map((rec, index) => (
                         <li key={index} className="flex items-start">
