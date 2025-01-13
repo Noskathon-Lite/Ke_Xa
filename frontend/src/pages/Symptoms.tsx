@@ -186,7 +186,7 @@ const App = () => {
                 </div>
               ) : (
                 <div className="h-full flex items-center justify-center text-gray-500">
-                  Select a symptom to see recommendations
+                  SELECT A SYMPTOM TO SEE RECOMMENDATION
                 </div>
               )}
             </div>
