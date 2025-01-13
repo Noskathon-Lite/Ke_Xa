@@ -140,7 +140,7 @@ const BroadcastComponent = () => {
         {/* Display Error State */}
         {error && (
           <p className="text-red-600">
-            Error: {error}. Please Try Refreshing The Page.
+           Unknown Error Occured: {error}. Please Try Refreshing The Page.
           </p>
         )}
 
