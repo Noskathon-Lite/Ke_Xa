@@ -64,7 +64,7 @@ const Alerts = () => {
   const UpdateMapView = () => {
     const map = useMap();
     if (coordinates) {
-      map.setView([coordinates.lat, coordinates.lng], 10); // Zoom level 10
+      map.setView([coordinates.lat, coordinates.lng], 5); // Zoom level 10
     }
     return null;
   };
