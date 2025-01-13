@@ -112,7 +112,7 @@ const Chatbot = () => {
               onKeyPress={(e) => {
                 if (e.key === 'Enter') sendMessage();
               }}
-              placeholder="Ask me something..."
+              placeholder="Ask me Anything..."
             />
           </div>
         </div>
